@@ -57,13 +57,13 @@
 :root {
   --radius: 1rem;
 
-  /* Brand palette (do site atual) */
-  --brand-pink: oklch(0.62 0.24 0);         /* magenta rosa */
-  --brand-yellow: oklch(0.82 0.17 82);      /* amarelo alegre */
-  --brand-purple: oklch(0.45 0.19 300);     /* roxo profundo */
+  /* Brand palette derivada do logo Aviva Cultura */
+  --brand-pink: oklch(0.60 0.17 15);        /* rosa/magenta do logo */
+  --brand-yellow: oklch(0.78 0.15 78);      /* mustard do logo */
+  --brand-purple: oklch(0.38 0.08 250);     /* navy profundo do logo */
   --brand-cream: oklch(0.97 0.02 85);       /* creme de fundo */
-  --brand-orange: oklch(0.72 0.19 45);      /* laranja */
-  --brand-teal: oklch(0.68 0.13 200);       /* turquesa */
+  --brand-orange: oklch(0.70 0.17 40);      /* terracota complementar */
+  --brand-teal: oklch(0.62 0.10 220);       /* azul-acinzentado */
 
   --background: oklch(0.98 0.015 85);
   --foreground: oklch(0.2 0.03 300);
@@ -73,22 +73,22 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.03 300);
 
-  --primary: oklch(0.62 0.24 0);
+  --primary: oklch(0.60 0.17 15);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.45 0.19 300);
+  --secondary: oklch(0.38 0.08 250);
   --secondary-foreground: oklch(0.99 0 0);
 
   --muted: oklch(0.95 0.02 85);
-  --muted-foreground: oklch(0.5 0.04 300);
-  --accent: oklch(0.82 0.17 82);
-  --accent-foreground: oklch(0.2 0.03 300);
+  --muted-foreground: oklch(0.5 0.04 260);
+  --accent: oklch(0.78 0.15 78);
+  --accent-foreground: oklch(0.2 0.03 260);
 
   --destructive: oklch(0.6 0.24 25);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.9 0.02 320);
-  --input: oklch(0.92 0.015 320);
-  --ring: oklch(0.62 0.24 0);
+  --border: oklch(0.9 0.015 260);
+  --input: oklch(0.92 0.015 260);
+  --ring: oklch(0.60 0.17 15);
 
   --sidebar: oklch(0.99 0.01 85);
   --sidebar-foreground: oklch(0.2 0.03 300);
