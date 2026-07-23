@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import logoUrl from "@/assets/logo.png";
+
 
 export function SiteFooter() {
   return (
@@ -9,7 +11,7 @@ export function SiteFooter() {
       </div>
       <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-14 md:grid-cols-3">
         <div>
-          <p className="font-display text-2xl font-bold">Aviva Cultura</p>
+          <img src={logoUrl} alt="Aviva Cultura" className="mb-3 h-16 w-auto" />
           <p className="mt-2 text-sm text-white/80">
             Uma mostra de artes que dá espaço aos artistas locais, incentivando e valorizando a criatividade através de ações culturais em espaços públicos.
           </p>
