@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import logoUrl from "@/assets/logo.png";
 
 const menu = [
   { label: "Home", to: "/" },
@@ -15,12 +16,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-          <Logo />
-          <div className="hidden flex-col leading-tight sm:flex">
-            <span className="font-display text-xl font-bold text-brand-pink">Aviva Cultura</span>
-            <span className="text-xs text-muted-foreground">Uma experiência cultural transformadora</span>
-          </div>
+        <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
+          <img src={logoUrl} alt="Aviva Cultura" className="h-12 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -61,13 +58,5 @@ export function SiteHeader() {
         </nav>
       </div>
     </header>
-  );
-}
-
-function Logo() {
-  return (
-    <div className="grid size-10 place-items-center rounded-full bg-gradient-to-br from-brand-pink via-brand-orange to-brand-yellow shadow-md">
-      <span className="font-display text-lg font-black text-white">A</span>
-    </div>
   );
 }
