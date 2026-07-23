@@ -9,8 +9,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Festival Aviva Cultura — Home" },
       { name: "description", content: "Mais do que arte. Uma experiência cultural transformadora. Conheça a próxima edição do Festival Aviva Cultura." },
-      { property: "og:title", content: "Festival Aviva Cultura" },
-      { property: "og:description", content: "Mais do que arte. Uma experiência cultural transformadora." },
+      { property: "og:title", content: "Festival Aviva Cultura — Home" },
+      { property: "og:description", content: "Mais do que arte. Uma experiência cultural transformadora. Conheça a próxima edição do Festival Aviva Cultura." },
     ],
   }),
   loader: ({ context }) => {
