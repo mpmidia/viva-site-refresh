@@ -196,9 +196,13 @@ function PreviousEditionsTeaser({ editions }: { editions: Edition[] }) {
 export function EditionCard({ edition }: { edition: Edition }) {
   const date = new Date(edition.data + "T00:00:00");
   return (
-    <article className="group overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <Link
+      to="/edicoes/$id"
+      params={{ id: edition.id }}
+      className="group block overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
       {edition.imagem_url ? (
-        <img src={edition.imagem_url} alt={edition.titulo} className="aspect-video w-full object-cover" />
+        <img src={edition.imagem_url} alt={edition.titulo} className="aspect-video w-full object-cover transition group-hover:scale-[1.02]" />
       ) : (
         <div className="aspect-video w-full bg-gradient-to-br from-brand-pink via-brand-orange to-brand-yellow" />
       )}
@@ -206,10 +210,10 @@ export function EditionCard({ edition }: { edition: Edition }) {
         <p className="text-xs font-semibold uppercase tracking-wider text-brand-purple">
           {date.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
         </p>
-        <h3 className="mt-2 font-display text-2xl text-foreground">{edition.titulo}</h3>
+        <h3 className="mt-2 font-display text-2xl text-foreground group-hover:text-brand-pink">{edition.titulo}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{edition.local}</p>
         <p className="mt-3 line-clamp-3 text-sm text-foreground/80">{edition.descricao}</p>
       </div>
-    </article>
+    </Link>
   );
 }
