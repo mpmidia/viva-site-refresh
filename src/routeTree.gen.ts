@@ -9,8 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProximaEdicaoRouteImport } from './routes/proxima-edicao'
+import { Route as OFestivalRouteImport } from './routes/o-festival'
+import { Route as EdicoesAnterioresRouteImport } from './routes/edicoes-anteriores'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ProximaEdicaoRoute = ProximaEdicaoRouteImport.update({
+  id: '/proxima-edicao',
+  path: '/proxima-edicao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OFestivalRoute = OFestivalRouteImport.update({
+  id: '/o-festival',
+  path: '/o-festival',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EdicoesAnterioresRoute = EdicoesAnterioresRouteImport.update({
+  id: '/edicoes-anteriores',
+  path: '/edicoes-anteriores',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +37,66 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/edicoes-anteriores': typeof EdicoesAnterioresRoute
+  '/o-festival': typeof OFestivalRoute
+  '/proxima-edicao': typeof ProximaEdicaoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/edicoes-anteriores': typeof EdicoesAnterioresRoute
+  '/o-festival': typeof OFestivalRoute
+  '/proxima-edicao': typeof ProximaEdicaoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/edicoes-anteriores': typeof EdicoesAnterioresRoute
+  '/o-festival': typeof OFestivalRoute
+  '/proxima-edicao': typeof ProximaEdicaoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/edicoes-anteriores' | '/o-festival' | '/proxima-edicao'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/edicoes-anteriores' | '/o-festival' | '/proxima-edicao'
+  id:
+    | '__root__'
+    | '/'
+    | '/edicoes-anteriores'
+    | '/o-festival'
+    | '/proxima-edicao'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EdicoesAnterioresRoute: typeof EdicoesAnterioresRoute
+  OFestivalRoute: typeof OFestivalRoute
+  ProximaEdicaoRoute: typeof ProximaEdicaoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/proxima-edicao': {
+      id: '/proxima-edicao'
+      path: '/proxima-edicao'
+      fullPath: '/proxima-edicao'
+      preLoaderRoute: typeof ProximaEdicaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o-festival': {
+      id: '/o-festival'
+      path: '/o-festival'
+      fullPath: '/o-festival'
+      preLoaderRoute: typeof OFestivalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/edicoes-anteriores': {
+      id: '/edicoes-anteriores'
+      path: '/edicoes-anteriores'
+      fullPath: '/edicoes-anteriores'
+      preLoaderRoute: typeof EdicoesAnterioresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +109,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EdicoesAnterioresRoute: EdicoesAnterioresRoute,
+  OFestivalRoute: OFestivalRoute,
+  ProximaEdicaoRoute: ProximaEdicaoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
