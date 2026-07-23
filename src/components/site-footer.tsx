@@ -33,7 +33,13 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="relative border-t border-white/15 py-4 text-center text-xs text-white/70">
-        © {new Date().getFullYear()} Festival Aviva Cultura. Todos os direitos reservados.
+        <Link
+          to="/dashboard"
+          className="mb-3 inline-block rounded-full border border-white/30 px-4 py-1.5 text-xs font-medium text-white transition hover:bg-brand-yellow hover:text-brand-purple"
+        >
+          Área da Equipe
+        </Link>
+        <div>© {new Date().getFullYear()} Festival Aviva Cultura. Todos os direitos reservados.</div>
       </div>
     </footer>
   );
