@@ -60,11 +60,3 @@ export function SiteHeader() {
     </header>
   );
 }
-
-function _UnusedLogo() {
-  return (
-    <div className="grid size-10 place-items-center rounded-full bg-gradient-to-br from-brand-pink via-brand-orange to-brand-yellow shadow-md">
-      <span className="font-display text-lg font-black text-white">A</span>
-    </div>
-  );
-}
