@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "";
+const BASE_URL = "https://viva-site-refresh.lovable.app";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
@@ -12,6 +12,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/o-festival", changefreq: "monthly", priority: "0.8" },
           { path: "/edicoes-anteriores", changefreq: "monthly", priority: "0.7" },
           { path: "/proxima-edicao", changefreq: "weekly", priority: "0.9" },
+          { path: "/patrocinio", changefreq: "monthly", priority: "0.8" },
+          { path: "/contato", changefreq: "monthly", priority: "0.6" },
         ];
         const urls = entries.map((e) => `  <url><loc>${BASE_URL}${e.path}</loc><changefreq>${e.changefreq}</changefreq><priority>${e.priority}</priority></url>`);
         const xml = [`<?xml version="1.0" encoding="UTF-8"?>`, `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`, ...urls, `</urlset>`].join("\n");
