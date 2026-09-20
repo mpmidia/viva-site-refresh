@@ -4,7 +4,15 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Redefinir senha — Aviva Cultura" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Redefinir senha — Festival Aviva Cultura" },
+    { name: "description", content: "Redefinição de senha da área restrita do Festival Aviva Cultura." },
+    { property: "og:title", content: "Redefinir senha — Festival Aviva Cultura" },
+    { property: "og:description", content: "Redefinição de senha da área restrita do Festival Aviva Cultura." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: ResetPage,
 });
 

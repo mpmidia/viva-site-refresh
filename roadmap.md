@@ -4,4 +4,4 @@
 - [x] Usar fotos e vídeo reais do Festival Aviva Cultura
 - [x] Aplicar a direção visual aprovada: banner fotográfico real e energia de grande festival
 - [x] Criar as páginas Patrocínio e Contato
-- [ ] Validar desktop, celular, navegação e mídias
+- [x] Validar desktop, celular, navegação e mídias

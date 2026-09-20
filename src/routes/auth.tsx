@@ -4,7 +4,15 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Acessar painel — Aviva Cultura" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Área da Equipe — Festival Aviva Cultura" },
+    { name: "description", content: "Acesso restrito à equipe do Festival Aviva Cultura." },
+    { property: "og:title", content: "Área da Equipe — Festival Aviva Cultura" },
+    { property: "og:description", content: "Acesso restrito à equipe do Festival Aviva Cultura." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: AuthPage,
 });
 
