@@ -1,64 +1,75 @@
-# Reformulação do site Aviva Cultura
+# Reformulação completa — Festival Aviva Cultura
 
-## Visão geral
+## Direção aprovada
 
-Recriar o site mantendo textos e imagens do site atual, com visual modernizado (mesma identidade — rosa, amarelo, roxo, tipografia amigável). Adicionar backend com Lovable Cloud para autenticação admin e gerenciamento de edições. A cada nova edição criada, ela vira automaticamente a home; as anteriores caem em "Edições Anteriores".
+- Estética de grande festival cultural: viva, popular, urbana e profissional.
+- Paleta: rosa `#E52B50`, amarelo `#FFCB05`, turquesa `#00A6A6` e violeta profundo `#24194F`, equilibrados com branco e áreas de respiro.
+- Tipografia: Archivo Black nos títulos e Hind nos textos.
+- Composição assimétrica, com fotografias e vídeos reais em grande escala.
+- Banner principal inspirado na energia de grandes festivais, usando uma foto real com muitas pessoas, palco e movimento; pouco texto e nenhuma estatística na primeira dobra.
+- Animações discretas de entrada, deslocamento e aproximação das imagens, com adaptação para quem prefere menos movimento.
 
-## Menu (mantido igual ao original)
+## Conteúdo e mídia reais
 
-- Home
-- O Festival
-- Edições Anteriores
-- Confira a Próxima Edição
+- Localizar, baixar e armazenar no projeto as melhores fotos e vídeos disponíveis no site original, sem depender de imagens genéricas quando houver registros reais.
+- Priorizar público, apresentações, artistas, cidade, bastidores e momentos espontâneos.
+- Preservar integralmente os textos das três últimas edições e os demais conteúdos existentes.
+- Não inventar datas, patrocinadores, contatos, arquivos ou links. Ações sem destino fornecido ficarão visualmente prontas, mas desabilitadas e identificadas como “Em breve”.
 
 ## Páginas públicas
 
-1. **Home (`/`)** — mostra a última edição cadastrada (nome, data, local, participantes, descrição, botão "Faça sua inscrição" com link externo). Se não houver edição, mostra o hero institucional atual + estatísticas (+174 artistas, +7.713 espectadores, +4 cidades).
-2. **O Festival (`/o-festival`)** — blocos "O Festival" e "Quem faz" (ACRIART), com imagens do site atual.
-3. **Edições Anteriores (`/edicoes-anteriores`)** — grid de todas as edições exceto a mais recente.
-4. **Confira a Próxima Edição (`/proxima-edicao`)** — destaque completo da edição atual com CTA de inscrição.
-5. **Login admin (`/auth`)** — email + senha + link "Esqueci minha senha".
-6. **Reset de senha (`/reset-password`)** — formulário para definir nova senha.
+### Início
 
-## Dashboard admin (`/dashboard`, protegido)
+1. Cabeçalho comercial e simples: Início, O Festival, Edições Anteriores, Patrocínio e Contato.
+2. Banner fotográfico imersivo com chamada curta do Festival Aviva Cultura.
+3. Apresentação rápida e emocional do festival.
+4. Exatamente as três últimas edições, com foto, título, texto integral e acesso à página da edição.
+5. Galeria assimétrica de fotos e vídeos reais.
+6. Chamadas para “O Festival” e para patrocinadores.
+7. Rodapé com contato, navegação e acesso “Área da Equipe”.
 
-- **Perfil**: nome, email, telefone, alterar senha.
-- **Edições**: listar, criar, editar, excluir. Campos: título, data, local, número de participantes, descritivo, URL do botão de inscrição, imagem de capa (upload).
-- A edição com data mais recente é automaticamente a "atual" (home + próxima edição).
+### O Festival
 
-## Backend (Lovable Cloud)
+- Usar exatamente os textos fornecidos no briefing.
+- Organizar a narrativa em blocos amplos com imagens reais e hierarquia editorial.
+- Transferir para esta página os resultados consolidados: +174 artistas, +7.713 espectadores, +4 cidades e +10 anos, com todas as descrições fornecidas.
+- Destacar a frase final sobre arte e transformação em uma composição visual própria.
 
-Tabelas:
-- `profiles` (id → auth.users, nome, telefone, email)
-- `user_roles` (id, user_id, role) + enum `app_role` + função `has_role` (padrão seguro)
-- `editions` (id, titulo, data, local, participantes, descricao, inscricao_url, imagem_url, created_at)
+### Edições Anteriores
 
-RLS:
-- `editions`: SELECT público para todos; INSERT/UPDATE/DELETE apenas para admins.
-- `profiles`: usuário lê/edita o próprio.
-- `user_roles`: leitura via `has_role`.
+- Manter todo o conteúdo existente.
+- Atualizar para uma navegação visual contemporânea, com fotos maiores, melhor leitura e acesso claro às páginas individuais.
+- Preservar o modelo automático: toda edição criada no painel ganha sua própria página.
 
-Storage bucket público `edition-images` para uploads.
+### Página individual da edição
 
-Primeiro usuário cadastrado recebe role `admin` automaticamente (trigger). Cadastros seguintes são usuários comuns sem acesso ao dashboard.
+- Renovar o modelo com capa ampla, informações principais, texto integral e navegação para outras edições.
+- Exibir inscrição somente quando houver link real.
 
-## Design
+### Próxima edição
 
-- Paleta baseada no site atual: rosa magenta (#E63888), amarelo (#F5A623), roxo (#6B3FA0), bege claro de fundo.
-- Tipografia: display arredondada tipo "Fredoka" para títulos + Inter para corpo.
-- Formas orgânicas (curvas SVG nas seções), respingos coloridos como no logo, mais respiro e hierarquia moderna.
-- Componentes shadcn customizados via tokens em `src/styles.css`.
+- Manter a rota existente, mas transformá-la em estrutura visual neutra e preparada para três fases futuras.
+- Não publicar detalhes de uma próxima edição enquanto não forem fornecidos.
 
-## Detalhes técnicos
+### Patrocínio
 
-- TanStack Start + Cloud (Supabase gerenciado).
-- Autenticação email/senha; reset via `resetPasswordForEmail` → `/reset-password`.
-- Server functions com `requireSupabaseAuth` para mutações de edições.
-- Loaders públicos usam client publishable server-side para SSR das edições.
-- Uploads via `supabase.storage` no dashboard.
-- Sitemap + robots atualizados com as 4 rotas públicas.
+- Criar a nova página e incluí-la no menu.
+- Usar integralmente o título, texto de abertura, quatro benefícios e chamada final do briefing.
+- Valorizar registros reais do festival para apoiar a proposta comercial.
+- Preparar os botões “Fale com a Nossa Equipe de Captação” e “Baixe o Mídia Kit de Patrocínio”, sem inventar WhatsApp ou PDF.
 
-## Fora do escopo
+### Contato
 
-- Não vou recriar comportamentos que dependam de plugins WordPress específicos (formulários de contato, integrações de terceiros) — só o que o pedido pede.
-- Imagens são reaproveitadas via URL do site atual (hotlink) para manter idênticas.
+- Levar o item do menu a uma área de contato no rodapé, usando apenas dados reais já disponíveis. Se não houver contato público confirmado, exibir uma chamada sem inventar telefone ou endereço.
+
+## Estrutura preservada
+
+- Manter o painel administrativo, autenticação, recuperação de senha e conta master já configurados.
+- Manter a lógica das edições e seus conteúdos no banco de dados.
+- Não alterar dados administrativos nem regras de acesso.
+
+## Validação
+
+- Conferir todas as páginas e ações em desktop e celular.
+- Verificar carregamento de fotos e vídeos, legibilidade, navegação, botões e páginas individuais.
+- Completar metadados próprios de compartilhamento e busca em cada página pública.
