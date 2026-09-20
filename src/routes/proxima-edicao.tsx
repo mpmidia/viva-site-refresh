@@ -1,81 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { CalendarDays, MapPin, Users } from "lucide-react";
+import { CalendarClock, Megaphone, TicketCheck } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
-import { editionsQuery } from "@/lib/editions";
+import { festivalMedia } from "@/lib/festival-media";
 
 export const Route = createFileRoute("/proxima-edicao")({
-  head: () => ({
-    meta: [
-      { title: "Confira a Próxima Edição — Aviva Cultura" },
-      { name: "description", content: "Detalhes completos da próxima edição do Festival Aviva Cultura — data, local, participantes e como se inscrever." },
-      { property: "og:title", content: "Próxima Edição — Aviva Cultura" },
-      { property: "og:description", content: "Detalhes da próxima edição e como se inscrever." },
-    ],
-  }),
-  loader: ({ context }) => { context.queryClient.ensureQueryData(editionsQuery()); },
-  component: NextPage,
+  head: () => ({ meta: [
+    { title: "Próxima Edição — Festival Aviva Cultura" },
+    { name: "description", content: "Acompanhe as futuras fases de anúncio, programação e inscrições da próxima edição do Festival Aviva Cultura." },
+    { property: "og:title", content: "Próxima Edição — Festival Aviva Cultura" },
+    { property: "og:description", content: "A próxima experiência Aviva Cultura será anunciada aqui." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }), component: NextPage,
 });
 
 function NextPage() {
-  const { data: editions } = useSuspenseQuery(editionsQuery());
-  const current = editions[0];
-
-  return (
-    <SiteShell>
-      <section className="mx-auto max-w-4xl px-4 py-16 md:py-24">
-        {!current ? (
-          <div className="rounded-3xl border border-dashed border-border/60 bg-card p-12 text-center">
-            <p className="font-display text-3xl text-brand-pink">Em breve!</p>
-            <p className="mt-3 text-muted-foreground">
-              A próxima edição do Festival Aviva Cultura ainda será anunciada. Fique de olho por aqui.
-            </p>
-          </div>
-        ) : (
-          <article className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-lg">
-            {current.imagem_url && (
-              <img src={current.imagem_url} alt={current.titulo} className="aspect-[21/9] w-full object-cover" />
-            )}
-            <div className="p-8 md:p-12">
-              <span className="inline-block rounded-full bg-brand-pink/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-pink">
-                Próxima edição
-              </span>
-              <h1 className="mt-3 font-display text-4xl text-foreground md:text-5xl">{current.titulo}</h1>
-
-              <div className="mt-6 grid gap-4 md:grid-cols-3">
-                <InfoBox icon={<CalendarDays className="size-5" />} label="Data" value={new Date(current.data + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })} />
-                <InfoBox icon={<MapPin className="size-5" />} label="Local" value={current.local} />
-                <InfoBox icon={<Users className="size-5" />} label="Participantes" value={String(current.participantes)} />
-              </div>
-
-              <div className="mt-8">
-                <h2 className="font-display text-2xl text-brand-purple">Sobre esta edição</h2>
-                <p className="mt-3 whitespace-pre-line text-foreground/85">{current.descricao}</p>
-              </div>
-
-              {current.inscricao_url && (
-                <a
-                  href={current.inscricao_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-8 inline-flex items-center justify-center rounded-full bg-brand-pink px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-brand-pink/30 hover:opacity-90"
-                >
-                  Faça sua inscrição
-                </a>
-              )}
-            </div>
-          </article>
-        )}
-      </section>
-    </SiteShell>
-  );
-}
-
-function InfoBox({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="rounded-2xl bg-brand-cream p-4">
-      <div className="flex items-center gap-2 text-brand-pink">{icon}<span className="text-xs font-semibold uppercase tracking-wider">{label}</span></div>
-      <p className="mt-2 font-display text-lg text-foreground">{value}</p>
-    </div>
-  );
+  const phases = [{ icon: Megaphone, title: "Anúncio", text: "Cidade, data e local" }, { icon: CalendarClock, title: "Programação", text: "Artistas e experiências" }, { icon: TicketCheck, title: "Inscrições", text: "Abertura e acesso" }];
+  return <SiteShell><section className="relative min-h-[64svh] overflow-hidden bg-brand-purple text-primary-foreground"><img src={festivalMedia.liveShow} alt="Apresentação musical do Festival Aviva Cultura" className="absolute inset-0 size-full object-cover" /><div className="absolute inset-0 bg-brand-purple/70" /><div className="relative mx-auto flex min-h-[64svh] max-w-7xl items-end px-5 py-16 md:px-8"><div><p className="text-sm font-bold uppercase text-brand-yellow">Próxima edição</p><h1 className="mt-4 max-w-4xl font-display text-5xl uppercase leading-tight md:text-8xl">Uma nova experiência está sendo preparada.</h1><p className="mt-5 max-w-2xl text-xl text-primary-foreground/80">As informações oficiais serão publicadas aqui no momento certo.</p></div></div></section><section className="py-20 md:py-28"><div className="mx-auto max-w-7xl px-5 md:px-8"><p className="text-sm font-bold uppercase text-brand-pink">Arquitetura preparada</p><h2 className="mt-3 max-w-3xl font-display text-4xl uppercase md:text-6xl">Acompanhe as três fases da próxima edição.</h2><div className="mt-12 grid border-l border-t border-border md:grid-cols-3">{phases.map(({ icon: Icon, title, text }, index) => <article key={title} className="border-b border-r border-border p-8"><Icon className="size-9 text-brand-pink" /><p className="mt-12 text-xs font-bold uppercase text-brand-teal">Fase 0{index + 1}</p><h3 className="mt-3 font-display text-2xl uppercase">{title}</h3><p className="mt-3 text-lg text-muted-foreground">{text}</p><span className="mt-8 inline-block bg-muted px-3 py-2 text-xs font-bold uppercase text-muted-foreground">Em breve</span></article>)}</div></div></section></SiteShell>;
 }

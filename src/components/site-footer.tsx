@@ -1,46 +1,16 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowUpRight } from "lucide-react";
 import logoUrl from "@/assets/logo.png";
-
 
 export function SiteFooter() {
   return (
-    <footer className="relative mt-24 overflow-hidden bg-brand-purple text-white">
-      <div className="absolute inset-0 opacity-10" aria-hidden>
-        <div className="absolute -left-16 top-8 size-48 rounded-full bg-brand-pink blur-3xl" />
-        <div className="absolute right-0 top-24 size-40 rounded-full bg-brand-yellow blur-3xl" />
+    <footer id="contato" className="bg-brand-purple text-primary-foreground">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-[1.2fr_.8fr_.8fr] md:px-8 md:py-20">
+        <div><img src={logoUrl} alt="Festival Aviva Cultura" className="h-16 w-auto" /><p className="mt-6 max-w-md text-lg leading-relaxed text-primary-foreground/70">Uma mostra de artes que dá espaço aos artistas locais e transforma espaços públicos através da cultura.</p></div>
+        <div><p className="font-display text-lg uppercase text-brand-yellow">Navegação</p><ul className="mt-5 space-y-3 text-sm font-bold uppercase"><li><Link to="/">Início</Link></li><li><Link to="/o-festival">O Festival</Link></li><li><Link to="/edicoes-anteriores">Edições anteriores</Link></li><li><Link to="/patrocinio">Patrocínio</Link></li><li><Link to="/contato">Contato</Link></li></ul></div>
+        <div><p className="font-display text-lg uppercase text-brand-yellow">Realização</p><p className="mt-5 text-primary-foreground/70">Realizado pela ACRIART, instituição sem fins lucrativos que há mais de 10 anos acredita no poder da arte como agente de transformação sociocultural.</p><Link to="/dashboard" className="mt-7 inline-flex items-center gap-2 border border-primary-foreground/35 px-4 py-3 text-xs font-bold uppercase transition hover:bg-brand-yellow hover:text-foreground">Área da Equipe <ArrowUpRight className="size-4" /></Link></div>
       </div>
-      <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-14 md:grid-cols-3">
-        <div>
-          <img src={logoUrl} alt="Aviva Cultura" className="mb-3 h-16 w-auto" />
-          <p className="mt-2 text-sm text-white/80">
-            Uma mostra de artes que dá espaço aos artistas locais, incentivando e valorizando a criatividade através de ações culturais em espaços públicos.
-          </p>
-        </div>
-        <div>
-          <p className="mb-3 font-display text-lg font-semibold">Navegação</p>
-          <ul className="space-y-2 text-sm">
-            <li><Link to="/" className="hover:text-brand-yellow">Home</Link></li>
-            <li><Link to="/o-festival" className="hover:text-brand-yellow">O Festival</Link></li>
-            <li><Link to="/edicoes-anteriores" className="hover:text-brand-yellow">Edições Anteriores</Link></li>
-            <li><Link to="/proxima-edicao" className="hover:text-brand-yellow">Confira a Próxima Edição</Link></li>
-          </ul>
-        </div>
-        <div>
-          <p className="mb-3 font-display text-lg font-semibold">Realização</p>
-          <p className="text-sm text-white/80">
-            Realizado pela ACRIART, instituição sem fins lucrativos que há mais de 10 anos acredita no poder da arte como agente de transformação sociocultural.
-          </p>
-        </div>
-      </div>
-      <div className="relative border-t border-white/15 py-4 text-center text-xs text-white/70">
-        <Link
-          to="/dashboard"
-          className="mb-3 inline-block rounded-full border border-white/30 px-4 py-1.5 text-xs font-medium text-white transition hover:bg-brand-yellow hover:text-brand-purple"
-        >
-          Área da Equipe
-        </Link>
-        <div>© {new Date().getFullYear()} Festival Aviva Cultura. Todos os direitos reservados.</div>
-      </div>
+      <div className="border-t border-primary-foreground/15 px-5 py-5 text-center text-xs text-primary-foreground/55">© {new Date().getFullYear()} Festival Aviva Cultura. Todos os direitos reservados.</div>
     </footer>
   );
 }
