@@ -44,19 +44,20 @@ function EditionDetailPage() {
 
   return (
     <SiteShell>
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-purple via-brand-purple to-brand-pink text-white">
-        <div className="absolute -left-32 -top-24 size-96 rounded-full bg-brand-yellow/25 blur-3xl" aria-hidden />
-        <div className="absolute -right-24 bottom-0 size-96 rounded-full bg-brand-pink/40 blur-3xl" aria-hidden />
-        <div className="relative mx-auto max-w-6xl px-4 py-16 md:py-24">
+      <section className="relative min-h-[62svh] overflow-hidden bg-brand-purple text-primary-foreground">
+        {e.imagem_url && <img src={e.imagem_url} alt="" className="absolute inset-0 size-full object-cover" />}
+        <div className="absolute inset-0 bg-brand-purple/65" />
+        <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-brand-purple to-transparent" />
+        <div className="relative mx-auto flex min-h-[62svh] max-w-7xl flex-col justify-end px-5 py-14 md:px-8 md:py-20">
           <Link
             to="/edicoes-anteriores"
-            className="inline-flex items-center gap-2 text-sm font-medium text-white/80 hover:text-brand-yellow"
+            className="inline-flex items-center gap-2 text-sm font-bold uppercase text-primary-foreground/80 hover:text-brand-yellow"
           >
             <ArrowLeft className="size-4" /> Todas as edições
           </Link>
-          <p className="mt-6 font-display text-xl text-brand-yellow md:text-2xl">Edição</p>
-          <h1 className="mt-1 font-display text-5xl font-bold leading-tight md:text-6xl">{e.titulo}</h1>
-          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/90">
+          <p className="mt-8 text-sm font-bold uppercase text-brand-yellow">Edição</p>
+          <h1 className="mt-2 font-display text-5xl uppercase leading-tight md:text-8xl">{e.titulo}</h1>
+          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-primary-foreground/90">
             <span className="inline-flex items-center gap-2"><CalendarDays className="size-4" />{dateStr}</span>
             <span className="inline-flex items-center gap-2"><MapPin className="size-4" />{e.local}</span>
             <span className="inline-flex items-center gap-2"><Users className="size-4" />{e.participantes} participantes</span>
@@ -64,26 +65,26 @@ function EditionDetailPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-14">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-start">
+      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
+        <div className="grid gap-12 md:grid-cols-[1.5fr_.75fr] md:items-start">
           <article className="space-y-5">
             {e.imagem_url && (
               <img
                 src={e.imagem_url}
                 alt={e.titulo}
-                className="aspect-video w-full rounded-3xl object-cover shadow-lg"
+                className="aspect-video w-full object-cover"
               />
             )}
-            <div className="rounded-3xl border border-border/60 bg-card p-8">
-              <h2 className="font-display text-2xl text-brand-pink">Sobre esta edição</h2>
-              <p className="mt-4 whitespace-pre-line text-foreground/85 leading-relaxed">
+            <div className="border-l-4 border-brand-pink pl-6 md:pl-10">
+              <h2 className="font-display text-3xl uppercase">Sobre esta edição</h2>
+              <p className="mt-5 whitespace-pre-line text-lg leading-relaxed text-foreground/80">
                 {e.descricao}
               </p>
             </div>
           </article>
 
-          <aside className="space-y-4 rounded-3xl border border-border/60 bg-card p-8 shadow-sm md:sticky md:top-24">
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand-purple">Informações</p>
+          <aside className="space-y-4 bg-brand-yellow p-8 md:sticky md:top-28">
+            <p className="text-xs font-bold uppercase text-foreground">Informações</p>
             <InfoRow label="Data" value={dateStr} />
             <InfoRow label="Local" value={e.local} />
             <InfoRow label="Participantes" value={String(e.participantes)} />
@@ -92,7 +93,7 @@ function EditionDetailPage() {
                 href={e.inscricao_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-brand-pink px-5 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-brand-pink/30 hover:opacity-90"
+                className="mt-4 inline-flex w-full items-center justify-center bg-brand-pink px-5 py-4 text-sm font-bold uppercase text-primary-foreground hover:opacity-90"
               >
                 Faça sua inscrição
               </a>

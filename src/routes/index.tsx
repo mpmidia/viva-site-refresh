@@ -1,154 +1,53 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { CalendarDays, MapPin, Users, ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
-import { editionsQuery, type Edition } from "@/lib/editions";
+import { EditionCard } from "@/components/edition-card";
+import { editionsQuery } from "@/lib/editions";
+import { festivalMedia } from "@/lib/festival-media";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Festival Aviva Cultura — Home" },
-      { name: "description", content: "Mais do que arte. Uma experiência cultural transformadora. Conheça a próxima edição do Festival Aviva Cultura." },
-      { property: "og:title", content: "Festival Aviva Cultura — Home" },
-      { property: "og:description", content: "Mais do que arte. Uma experiência cultural transformadora. Conheça a próxima edição do Festival Aviva Cultura." },
-    ],
-  }),
-  loader: ({ context }) => {
-    context.queryClient.ensureQueryData(editionsQuery());
-  },
+  head: () => ({ meta: [
+    { title: "Festival Aviva Cultura — Arte que movimenta a cidade" },
+    { name: "description", content: "Entre no Festival Aviva Cultura: arte, cidade, pessoas e experiências culturais que transformam espaços públicos." },
+    { property: "og:title", content: "Festival Aviva Cultura — Arte que movimenta a cidade" },
+    { property: "og:description", content: "Uma experiência cultural viva que valoriza artistas regionais e aproxima a arte das pessoas." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
+  loader: ({ context }) => { context.queryClient.ensureQueryData(editionsQuery()); },
   component: HomePage,
 });
 
 function HomePage() {
   const { data: editions } = useSuspenseQuery(editionsQuery());
-  const current = editions[0];
-
   return (
     <SiteShell>
-      <Hero current={current} />
-      <Stats />
+      <Hero />
       <FestivalIntro />
-      {editions.length > 1 && <PreviousEditionsTeaser editions={editions.slice(1, 4)} />}
+      <LatestEditions editions={editions.slice(0, 3)} />
+      <Gallery />
+      <Invitation />
+      <SponsorCall />
     </SiteShell>
   );
 }
 
-function Hero({ current }: { current?: Edition }) {
+function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-brand-yellow/40 via-background to-background">
-      <div className="absolute -left-24 -top-24 size-96 rounded-full bg-brand-pink/20 blur-3xl" aria-hidden />
-      <div className="absolute -right-32 top-40 size-96 rounded-full bg-brand-purple/20 blur-3xl" aria-hidden />
-
-      <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2 md:py-24 md:items-center">
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-brand-pink/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-pink">
-            Festival Aviva Cultura
-          </span>
-          <h1 className="mt-4 font-display text-5xl leading-tight text-foreground md:text-6xl">
-            Mais do que <span className="text-brand-pink">arte.</span>
-            <br />
-            <span className="text-brand-purple">Uma experiência cultural</span>{" "}
-            <span className="italic text-brand-orange">transformadora.</span>
-          </h1>
-          <p className="mt-5 max-w-lg text-lg text-muted-foreground">
-            Uma mostra que dá espaço aos artistas locais, incentivando e valorizando a criatividade através de ações culturais em espaços públicos.
-          </p>
-
-          {current ? (
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/proxima-edicao"
-                className="inline-flex items-center gap-2 rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-brand-pink/30 hover:opacity-90"
-              >
-                Confira a próxima edição <ArrowRight className="size-4" />
-              </Link>
-              {current.inscricao_url && (
-                <a
-                  href={current.inscricao_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-brand-yellow px-6 py-3 text-sm font-semibold text-foreground hover:opacity-90"
-                >
-                  Faça sua inscrição
-                </a>
-              )}
-            </div>
-          ) : (
-            <div className="mt-8">
-              <Link
-                to="/o-festival"
-                className="inline-flex items-center gap-2 rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
-              >
-                Conheça o festival <ArrowRight className="size-4" />
-              </Link>
-            </div>
-          )}
-        </div>
-
-        {current && <CurrentEditionCard edition={current} />}
-      </div>
-    </section>
-  );
-}
-
-function CurrentEditionCard({ edition }: { edition: Edition }) {
-  const date = new Date(edition.data + "T00:00:00");
-  return (
-    <div className="relative rounded-3xl border border-border/60 bg-card p-6 shadow-xl shadow-brand-purple/10">
-      {edition.imagem_url && (
-        <img
-          src={edition.imagem_url}
-          alt={edition.titulo}
-          className="mb-5 aspect-video w-full rounded-2xl object-cover"
-        />
-      )}
-      <span className="inline-block rounded-full bg-brand-purple/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-purple">
-        Próxima edição
-      </span>
-      <h2 className="mt-3 font-display text-3xl text-foreground">{edition.titulo}</h2>
-      <div className="mt-4 space-y-2 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2"><CalendarDays className="size-4 text-brand-pink" />{date.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}</div>
-        <div className="flex items-center gap-2"><MapPin className="size-4 text-brand-pink" />{edition.local}</div>
-        <div className="flex items-center gap-2"><Users className="size-4 text-brand-pink" />{edition.participantes} participantes</div>
-      </div>
-      <p className="mt-4 line-clamp-4 text-sm text-foreground/80">{edition.descricao}</p>
-      {edition.inscricao_url && (
-        <a
-          href={edition.inscricao_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-brand-pink px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
-        >
-          Faça sua inscrição
-        </a>
-      )}
-    </div>
-  );
-}
-
-function Stats() {
-  return (
-    <section className="mx-auto max-w-6xl px-4 py-16">
-      <p className="text-center text-sm font-semibold uppercase tracking-widest text-brand-purple">
-        Desde a sua primeira edição, em 2019, o
-      </p>
-      <h2 className="mt-3 text-center font-display text-4xl text-brand-pink md:text-5xl">
-        FESTIVAL AVIVA CULTURA
-      </h2>
-      <p className="mt-3 text-center text-lg text-muted-foreground">já impactou muita gente!</p>
-
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
-        {[
-          { n: "+174", label: "Artistas Incentivados", color: "bg-brand-pink" },
-          { n: "+7.713", label: "Espectadores Alcançados", color: "bg-brand-yellow" },
-          { n: "+4", label: "Cidades Beneficiadas", color: "bg-brand-purple" },
-        ].map((s) => (
-          <div key={s.label} className="rounded-3xl border border-border/60 bg-card p-8 text-center shadow-sm">
-            <div className={`mx-auto mb-4 h-2 w-16 rounded-full ${s.color}`} />
-            <p className="font-display text-5xl font-bold text-foreground">{s.n}</p>
-            <p className="mt-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">{s.label}</p>
+    <section className="relative min-h-[76svh] overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[calc(100svh-81px)]">
+      <img src={festivalMedia.heroCrowd} alt="Público reunido em uma apresentação do Festival Aviva Cultura" className="festival-drift absolute inset-0 size-full object-cover object-center" />
+      <div className="absolute inset-0 bg-brand-purple/35" />
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-brand-purple via-brand-purple/45 to-transparent" />
+      <div className="relative mx-auto flex min-h-[76svh] max-w-7xl items-end px-5 pb-12 pt-24 md:min-h-[calc(100svh-81px)] md:px-8 md:pb-16">
+        <div className="max-w-5xl">
+          <p className="mb-4 text-sm font-bold uppercase text-brand-yellow">Festival Aviva Cultura</p>
+          <h1 className="max-w-4xl font-display text-5xl uppercase leading-[.92] text-primary-foreground md:text-8xl lg:text-9xl">A cidade vira palco.</h1>
+          <div className="mt-7 flex flex-wrap items-center gap-5">
+            <p className="max-w-xl text-lg leading-relaxed text-primary-foreground/90 md:text-xl">Arte, pessoas e experiências culturais ocupando espaços públicos e movimentando a vida ao nosso redor.</p>
+            <Link to="/o-festival" className="inline-flex items-center gap-3 bg-brand-yellow px-6 py-4 text-sm font-bold uppercase text-foreground transition hover:bg-brand-pink hover:text-primary-foreground">Conheça o festival <ArrowRight className="size-5" /></Link>
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );
@@ -156,64 +55,59 @@ function Stats() {
 
 function FestivalIntro() {
   return (
-    <section className="bg-gradient-to-b from-background to-brand-cream">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 md:grid-cols-2">
-        <article className="rounded-3xl bg-card p-8 shadow-sm">
-          <h3 className="font-display text-3xl text-brand-pink">O Festival</h3>
-          <p className="mt-4 text-foreground/80">
-            Aviva Cultura é uma mostra de artes feita especialmente para dar espaço aos artistas locais, incentivando e valorizando a criatividade através de ações culturais em espaços públicos, difundindo valores e educando através da arte.
-          </p>
-        </article>
-        <article className="rounded-3xl bg-card p-8 shadow-sm">
-          <h3 className="font-display text-3xl text-brand-purple">Quem faz</h3>
-          <p className="mt-4 text-foreground/80">
-            O festival é realizado pela ACRIART, uma instituição sem fins lucrativos que — há mais de 10 anos — acredita no poder da arte como agente de transformação sociocultural.
-          </p>
-        </article>
+    <section className="bg-background py-20 md:py-28">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-[.75fr_1.25fr] md:px-8">
+        <p className="text-sm font-bold uppercase text-brand-pink">Uma experiência cultural transformadora</p>
+        <div>
+          <h2 className="font-display text-4xl uppercase leading-tight md:text-6xl">Um encontro entre arte, cidade e pessoas.</h2>
+          <p className="mt-6 max-w-3xl text-xl leading-relaxed text-muted-foreground">Aviva Cultura é uma mostra de artes feita especialmente para dar espaço aos artistas locais, incentivando e valorizando a criatividade através de ações culturais em espaços públicos, difundindo valores e educando através da arte.</p>
+        </div>
       </div>
     </section>
   );
 }
 
-function PreviousEditionsTeaser({ editions }: { editions: Edition[] }) {
+function LatestEditions({ editions }: { editions: Awaited<ReturnType<typeof import("@/lib/editions").fetchEditions>> }) {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-16">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <h2 className="font-display text-3xl text-foreground md:text-4xl">Confira as edições anteriores</h2>
-        <Link to="/edicoes-anteriores" className="text-sm font-semibold text-brand-pink hover:underline">
-          Conheça todas as edições →
-        </Link>
-      </div>
-      <div className="mt-8 grid gap-6 md:grid-cols-3">
-        {editions.map((e) => (
-          <EditionCard key={e.id} edition={e} />
-        ))}
+    <section className="bg-brand-cream py-20 md:py-28">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div><p className="text-sm font-bold uppercase text-brand-teal">Aconteceu no Aviva</p><h2 className="mt-3 font-display text-4xl uppercase md:text-6xl">Últimas edições</h2></div>
+          <Link to="/edicoes-anteriores" className="inline-flex items-center gap-2 border-b-2 border-brand-pink pb-1 text-sm font-bold uppercase">Ver todas <ArrowRight className="size-4" /></Link>
+        </div>
+        <div className="mt-12 grid gap-10 md:grid-cols-3">{editions.map((edition) => <EditionCard key={edition.id} edition={edition} showFullText />)}</div>
       </div>
     </section>
   );
 }
 
-export function EditionCard({ edition }: { edition: Edition }) {
-  const date = new Date(edition.data + "T00:00:00");
+function Gallery() {
   return (
-    <Link
-      to="/edicoes/$id"
-      params={{ id: edition.id }}
-      className="group block overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-    >
-      {edition.imagem_url ? (
-        <img src={edition.imagem_url} alt={edition.titulo} className="aspect-video w-full object-cover transition group-hover:scale-[1.02]" />
-      ) : (
-        <div className="aspect-video w-full bg-gradient-to-br from-brand-pink via-brand-orange to-brand-yellow" />
-      )}
-      <div className="p-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-brand-purple">
-          {date.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
-        </p>
-        <h3 className="mt-2 font-display text-2xl text-foreground group-hover:text-brand-pink">{edition.titulo}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{edition.local}</p>
-        <p className="mt-3 line-clamp-3 text-sm text-foreground/80">{edition.descricao}</p>
+    <section className="overflow-hidden bg-brand-purple py-20 text-primary-foreground md:py-28">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="grid gap-8 md:grid-cols-12 md:items-end">
+          <div className="md:col-span-5"><p className="text-sm font-bold uppercase text-brand-yellow">Veja. Escute. Sinta.</p><h2 className="mt-3 font-display text-4xl uppercase leading-tight md:text-6xl">O festival acontece por inteiro.</h2></div>
+          <p className="text-lg text-primary-foreground/75 md:col-span-4 md:col-start-9">Palco, rua, encontros, bastidores e a emoção de quem faz parte de cada edição.</p>
+        </div>
+        <div className="mt-12 grid auto-rows-[190px] grid-cols-2 gap-3 md:auto-rows-[260px] md:grid-cols-4">
+          <img src={festivalMedia.brassCity} alt="Apresentação musical do Aviva Cultura em espaço público" className="col-span-2 row-span-2 size-full object-cover" />
+          <div className="relative col-span-2 row-span-2 overflow-hidden md:col-span-2">
+            <video controls preload="metadata" poster={festivalMedia.performerStage} className="size-full object-cover"><source src={festivalMedia.film} type="video/mp4" /></video>
+            <span className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 bg-brand-pink px-3 py-2 text-xs font-bold uppercase"><Play className="size-4" /> O que é o Aviva</span>
+          </div>
+          <img src={festivalMedia.audienceTheater} alt="Público acompanhando espetáculo teatral" className="col-span-2 size-full object-cover md:col-span-1" />
+          <img src={festivalMedia.liveShow} alt="Artista em apresentação musical" className="size-full object-cover" />
+          <img src={festivalMedia.cityPerformance} alt="Performance artística em edição do festival" className="size-full object-cover" />
+        </div>
       </div>
-    </Link>
+    </section>
   );
+}
+
+function Invitation() {
+  return <section className="bg-brand-yellow py-20"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 px-5 md:flex-row md:items-end md:px-8"><h2 className="max-w-4xl font-display text-4xl uppercase leading-tight md:text-6xl">Mais do que um festival: um momento para desacelerar e se emocionar.</h2><Link to="/o-festival" className="inline-flex shrink-0 items-center gap-2 bg-foreground px-6 py-4 text-sm font-bold uppercase text-background">Conheça nossa história <ArrowRight className="size-5" /></Link></div></section>;
+}
+
+function SponsorCall() {
+  return <section className="relative overflow-hidden py-24 text-primary-foreground"><img src={festivalMedia.artistTalk} alt="Encontro cultural realizado pelo Festival Aviva Cultura" className="absolute inset-0 size-full object-cover" /><div className="absolute inset-0 bg-brand-pink/85" /><div className="relative mx-auto max-w-7xl px-5 md:px-8"><p className="text-sm font-bold uppercase text-brand-yellow">Patrocínio</p><h2 className="mt-4 max-w-4xl font-display text-4xl uppercase leading-tight md:text-6xl">Sua marca no centro da transformação cultural.</h2><Link to="/patrocinio" className="mt-8 inline-flex items-center gap-2 bg-brand-yellow px-6 py-4 text-sm font-bold uppercase text-foreground">Quero conhecer o projeto <ArrowRight className="size-5" /></Link></div></section>;
 }

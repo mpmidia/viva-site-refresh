@@ -7,7 +7,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { fetchEditions, type Edition } from "@/lib/editions";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Painel — Aviva Cultura" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [
+    { title: "Painel da Equipe — Festival Aviva Cultura" },
+    { name: "description", content: "Gerenciamento restrito das edições do Festival Aviva Cultura." },
+    { property: "og:title", content: "Painel da Equipe — Festival Aviva Cultura" },
+    { property: "og:description", content: "Gerenciamento restrito das edições do Festival Aviva Cultura." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+    { name: "robots", content: "noindex" },
+  ] }),
   component: DashboardPage,
 });
 

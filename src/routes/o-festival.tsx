@@ -1,63 +1,43 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/site-shell";
+import { festivalMedia } from "@/lib/festival-media";
 
 export const Route = createFileRoute("/o-festival")({
-  head: () => ({
-    meta: [
-      { title: "O Festival — Aviva Cultura" },
-      { name: "description", content: "Conheça o Festival Aviva Cultura e a ACRIART, instituição realizadora com mais de 10 anos de história." },
-      { property: "og:title", content: "O Festival — Aviva Cultura" },
-      { property: "og:description", content: "Uma mostra que dá espaço aos artistas locais e valoriza a criatividade em espaços públicos." },
-    ],
-  }),
+  head: () => ({ meta: [
+    { title: "O Festival — Festival Aviva Cultura" },
+    { name: "description", content: "Conheça o encontro que transforma espaços públicos em territórios de arte, afeto, diálogo e cidadania." },
+    { property: "og:title", content: "O Festival — Festival Aviva Cultura" },
+    { property: "og:description", content: "Mais do que um festival: arte, cidade, pessoas e transformação sociocultural." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+  ] }),
   component: FestivalPage,
 });
+
+const results = [
+  { number: "+174", title: "Artistas Incentivados", text: "fomento à economia criativa e apoio a talentos regionais" },
+  { number: "+7.713", title: "Espectadores Alcançados", text: "participação popular, acesso livre e gratuito" },
+  { number: "+4", title: "Cidades Beneficiadas", text: "presença regional contínua e descentralização" },
+  { number: "+10", title: "Anos de Trajetória", text: "solidez e compromisso da ACRIART" },
+];
 
 function FestivalPage() {
   return (
     <SiteShell>
-      <section className="bg-gradient-to-b from-brand-pink/10 via-background to-background">
-        <div className="mx-auto max-w-4xl px-4 py-16 text-center md:py-24">
-          <span className="inline-block rounded-full bg-brand-pink/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-pink">
-            Sobre nós
-          </span>
-          <h1 className="mt-4 font-display text-5xl text-foreground md:text-6xl">O Festival</h1>
-          <p className="mt-5 text-lg text-muted-foreground">
-            Uma experiência cultural transformadora para artistas e público.
-          </p>
-        </div>
+      <section className="relative min-h-[68svh] overflow-hidden bg-brand-purple text-primary-foreground">
+        <img src={festivalMedia.brassCity} alt="Artistas do Festival Aviva Cultura em apresentação na cidade" className="absolute inset-0 size-full object-cover" />
+        <div className="absolute inset-0 bg-brand-purple/55" />
+        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-brand-purple to-transparent" />
+        <div className="relative mx-auto flex min-h-[68svh] max-w-7xl items-end px-5 py-14 md:px-8 md:py-20"><div className="max-w-5xl"><p className="text-sm font-bold uppercase text-brand-yellow">O Festival</p><h1 className="mt-4 font-display text-4xl uppercase leading-tight md:text-7xl">Mais do que um festival: um momento para desacelerar, emocionar-se e movimentar a cidade com o que ela tem de melhor.</h1></div></div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-4 pb-20">
-        <div className="space-y-10">
-          <article className="rounded-3xl bg-card p-8 shadow-sm">
-            <h2 className="font-display text-3xl text-brand-pink">O Festival</h2>
-            <p className="mt-4 text-lg leading-relaxed text-foreground/85">
-              Aviva Cultura é uma mostra de artes feita especialmente para dar espaço aos artistas locais, incentivando e valorizando a criatividade através de ações culturais em espaços públicos, difundindo valores e educando através da arte.
-            </p>
-          </article>
+      <section className="py-20 md:py-28"><div className="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-12 md:px-8"><h2 className="font-display text-4xl uppercase text-brand-pink md:col-span-4 md:text-5xl">A surpresa de um encontro espontâneo.</h2><p className="text-xl leading-relaxed text-foreground/80 md:col-span-7 md:col-start-6">Sabe aquela sensação de andar pela cidade e ser surpreendido por uma música, uma cor ou uma performance que nos faz parar, sorrir e esquecer a pressa do dia? O Festival Aviva Cultura nasce exatamente desse encontro espontâneo, transformando diversos locais em espaços de pura vida, afeto e inspiração.</p></div></section>
 
-          <article className="rounded-3xl bg-card p-8 shadow-sm">
-            <h2 className="font-display text-3xl text-brand-purple">Quem faz</h2>
-            <p className="mt-4 text-lg leading-relaxed text-foreground/85">
-              O festival é realizado pela ACRIART, uma instituição sem fins lucrativos que — há mais de 10 anos — acredita no poder da arte como agente de transformação sociocultural.
-            </p>
-          </article>
+      <section className="bg-brand-teal py-20 md:py-28"><div className="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-2 md:items-center md:px-8"><img src={festivalMedia.audienceTheater} alt="Público participando de apresentação do Festival Aviva Cultura" className="aspect-[4/5] w-full object-cover" /><div className="text-foreground"><p className="text-sm font-bold uppercase">Quem faz</p><h2 className="mt-4 font-display text-4xl uppercase leading-tight md:text-6xl">Gente da nossa terra, arte no coração da cidade</h2><p className="mt-6 text-lg leading-relaxed">Feito com a dedicação da ACRIART, que há mais de 10 anos acredita e prova que a arte tem o poder de mudar vidas, o Festival Aviva Cultura é uma mostra artística projetada para fortalecer a identidade regional e ressignificar a ocupação dos espaços públicos. Concebido como uma experiência de relevante impacto social e educativo, o projeto atua na democratização do acesso às artes, transformando praças e locais de grande circulação em territórios de efervescência criativa, diálogo e cidadania. O Aviva Cultura não é só um evento no calendário. É um abraço coletivo, um convite para desacelerar, emocionar e valorizar o que é nosso.</p></div></div></section>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { n: "+174", label: "Artistas Incentivados" },
-              { n: "+7.713", label: "Espectadores Alcançados" },
-              { n: "+4", label: "Cidades Beneficiadas" },
-            ].map((s) => (
-              <div key={s.label} className="rounded-3xl border border-border/60 bg-card p-6 text-center">
-                <p className="font-display text-4xl font-bold text-brand-pink">{s.n}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <section className="bg-brand-purple py-20 text-primary-foreground md:py-28"><div className="mx-auto max-w-7xl px-5 md:px-8"><p className="text-sm font-bold uppercase text-brand-yellow">Resultados e impacto consolidado</p><h2 className="mt-4 max-w-4xl font-display text-4xl uppercase leading-tight md:text-6xl">Cultura que deixa marcas reais.</h2><div className="mt-12 grid border-l border-t border-primary-foreground/25 md:grid-cols-2 lg:grid-cols-4">{results.map((item) => <article key={item.title} className="border-b border-r border-primary-foreground/25 p-7"><p className="font-display text-5xl text-brand-yellow md:text-6xl">{item.number}</p><h3 className="mt-4 font-display text-xl uppercase">{item.title}</h3><p className="mt-3 text-primary-foreground/70">{item.text}</p></article>)}</div></div></section>
+
+      <section className="bg-brand-yellow py-20 md:py-28"><div className="mx-auto max-w-6xl px-5 text-center md:px-8"><p className="font-display text-4xl uppercase leading-tight md:text-7xl">A arte como vetor de transformação: integrando talentos locais e fortalecendo a comunidade.</p></div></section>
     </SiteShell>
   );
 }
