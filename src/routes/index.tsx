@@ -35,14 +35,13 @@ function HomePage() {
 
 function Hero() {
   return (
-    <section className="relative min-h-[76svh] overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[calc(100svh-81px)]">
-      <img src={festivalMedia.heroCrowd} alt="Público reunido em uma apresentação do Festival Aviva Cultura" className="festival-drift absolute inset-0 size-full object-cover object-center" />
-      <div className="absolute inset-0 bg-brand-purple/35" />
-      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-brand-purple via-brand-purple/45 to-transparent" />
-      <div className="relative mx-auto flex min-h-[76svh] max-w-7xl items-end px-5 pb-12 pt-24 md:min-h-[calc(100svh-81px)] md:px-8 md:pb-16">
+    <section className="relative overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[calc(100svh-81px)]">
+      <div className="relative aspect-[4/3] overflow-hidden md:absolute md:inset-0 md:aspect-auto"><img src={festivalMedia.heroCrowd} alt="Público reunido em uma apresentação do Festival Aviva Cultura" className="festival-drift size-full object-cover object-center" /><div className="absolute inset-0 bg-brand-purple/10 md:bg-brand-purple/30" /></div>
+      <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/60 md:to-transparent" />
+      <div className="relative mx-auto flex max-w-7xl items-center px-5 py-12 md:min-h-[calc(100svh-81px)] md:px-8 md:py-16">
         <div className="max-w-5xl">
           <p className="mb-4 text-sm font-bold uppercase text-brand-yellow">Festival Aviva Cultura</p>
-          <h1 className="max-w-4xl font-display text-5xl uppercase leading-[.92] text-primary-foreground md:text-8xl lg:text-9xl">A cidade vira palco.</h1>
+          <h1 className="max-w-4xl font-display text-5xl uppercase leading-none text-primary-foreground md:text-8xl lg:text-9xl">A cidade vira palco.</h1>
           <div className="mt-7 flex flex-wrap items-center gap-5">
             <p className="max-w-xl text-lg leading-relaxed text-primary-foreground/90 md:text-xl">Arte, pessoas e experiências culturais ocupando espaços públicos e movimentando a vida ao nosso redor.</p>
             <Link to="/o-festival" className="inline-flex items-center gap-3 bg-brand-yellow px-6 py-4 text-sm font-bold uppercase text-foreground transition hover:bg-brand-pink hover:text-primary-foreground">Conheça o festival <ArrowRight className="size-5" /></Link>

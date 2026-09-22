@@ -24,11 +24,10 @@ const results = [
 function FestivalPage() {
   return (
     <SiteShell>
-      <section className="relative min-h-[68svh] overflow-hidden bg-brand-purple text-primary-foreground">
-        <img src={festivalMedia.brassCity} alt="Artistas do Festival Aviva Cultura em apresentação na cidade" className="absolute inset-0 size-full object-cover" />
-        <div className="absolute inset-0 bg-brand-purple/55" />
-        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-brand-purple to-transparent" />
-        <div className="relative mx-auto flex min-h-[68svh] max-w-7xl items-end px-5 py-14 md:px-8 md:py-20"><div className="max-w-5xl"><p className="text-sm font-bold uppercase text-brand-yellow">O Festival</p><h1 className="mt-4 font-display text-4xl uppercase leading-tight md:text-7xl">Mais do que um festival: um momento para desacelerar, emocionar-se e movimentar a cidade com o que ela tem de melhor.</h1></div></div>
+      <section className="relative overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[72svh]">
+        <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={festivalMedia.brassCity} alt="Artistas do Festival Aviva Cultura em apresentação na cidade" className="size-full object-cover" /></div>
+        <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/75 md:to-brand-purple/10" />
+        <div className="relative mx-auto flex max-w-7xl items-center px-5 py-12 md:min-h-[72svh] md:px-8 md:py-20"><div className="max-w-4xl"><p className="text-sm font-bold uppercase text-brand-yellow">O Festival</p><h1 className="mt-4 font-display text-4xl uppercase leading-tight md:text-6xl lg:text-7xl">Mais do que um festival: um momento para desacelerar, emocionar-se e movimentar a cidade com o que ela tem de melhor.</h1></div></div>
       </section>
 
       <section className="py-20 md:py-28"><div className="mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-12 md:px-8"><h2 className="font-display text-4xl uppercase text-brand-pink md:col-span-4 md:text-5xl">A surpresa de um encontro espontâneo.</h2><p className="text-xl leading-relaxed text-foreground/80 md:col-span-7 md:col-start-6">Sabe aquela sensação de andar pela cidade e ser surpreendido por uma música, uma cor ou uma performance que nos faz parar, sorrir e esquecer a pressa do dia? O Festival Aviva Cultura nasce exatamente desse encontro espontâneo, transformando diversos locais em espaços de pura vida, afeto e inspiração.</p></div></section>
