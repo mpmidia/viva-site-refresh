@@ -5,6 +5,10 @@ import { CalendarDays, MapPin, Users, Pencil, Trash2, Plus, LogOut, User as User
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchEditions, type Edition } from "@/lib/editions";
+import { NextEditionPanel } from "@/components/dashboard/next-edition-panel";
+import { ProgramPanel } from "@/components/dashboard/program-panel";
+import { RegistrationsPanel } from "@/components/dashboard/registrations-panel";
+import { ImagesPanel } from "@/components/dashboard/images-panel";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [
@@ -19,7 +23,7 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-type Tab = "editions" | "profile";
+type Tab = "editions" | "next" | "program" | "registrations" | "images" | "profile";
 
 function DashboardPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -57,14 +61,23 @@ function DashboardPage() {
             <LogOut className="size-4" /> Sair
           </button>
         </div>
-        <div className="mx-auto flex max-w-6xl gap-2 px-4 pb-3">
+        <div className="mx-auto flex max-w-6xl flex-wrap gap-2 px-4 pb-3">
           <TabButton active={tab === "editions"} onClick={() => setTab("editions")}>Edições</TabButton>
+          <TabButton active={tab === "next"} onClick={() => setTab("next")}>Próxima Edição</TabButton>
+          <TabButton active={tab === "program"} onClick={() => setTab("program")}>Programação</TabButton>
+          <TabButton active={tab === "registrations"} onClick={() => setTab("registrations")}>Inscrições</TabButton>
+          <TabButton active={tab === "images"} onClick={() => setTab("images")}>Imagens</TabButton>
           <TabButton active={tab === "profile"} onClick={() => setTab("profile")}><UserIcon className="mr-1 inline size-4" />Perfil</TabButton>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        {tab === "editions" ? <EditionsPanel /> : <ProfilePanel userId={user.id} email={user.email ?? ""} />}
+        {tab === "editions" && <EditionsPanel />}
+        {tab === "next" && <NextEditionPanel />}
+        {tab === "program" && <ProgramPanel />}
+        {tab === "registrations" && <RegistrationsPanel />}
+        {tab === "images" && <ImagesPanel />}
+        {tab === "profile" && <ProfilePanel userId={user.id} email={user.email ?? ""} />}
       </main>
     </div>
   );
