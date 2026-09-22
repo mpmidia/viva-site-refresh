@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProximaEdicaoRouteImport } from './routes/proxima-edicao'
+import { Route as ProgramacaoRouteImport } from './routes/programacao'
 import { Route as PatrocinioRouteImport } from './routes/patrocinio'
 import { Route as OFestivalRouteImport } from './routes/o-festival'
 import { Route as EdicoesAnterioresRouteImport } from './routes/edicoes-anteriores'
@@ -34,6 +35,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const ProximaEdicaoRoute = ProximaEdicaoRouteImport.update({
   id: '/proxima-edicao',
   path: '/proxima-edicao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgramacaoRoute = ProgramacaoRouteImport.update({
+  id: '/programacao',
+  path: '/programacao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatrocinioRoute = PatrocinioRouteImport.update({
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/edicoes-anteriores': typeof EdicoesAnterioresRoute
   '/o-festival': typeof OFestivalRoute
   '/patrocinio': typeof PatrocinioRoute
+  '/programacao': typeof ProgramacaoRoute
   '/proxima-edicao': typeof ProximaEdicaoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/edicoes-anteriores': typeof EdicoesAnterioresRoute
   '/o-festival': typeof OFestivalRoute
   '/patrocinio': typeof PatrocinioRoute
+  '/programacao': typeof ProgramacaoRoute
   '/proxima-edicao': typeof ProximaEdicaoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/edicoes-anteriores': typeof EdicoesAnterioresRoute
   '/o-festival': typeof OFestivalRoute
   '/patrocinio': typeof PatrocinioRoute
+  '/programacao': typeof ProgramacaoRoute
   '/proxima-edicao': typeof ProximaEdicaoRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/edicoes-anteriores'
     | '/o-festival'
     | '/patrocinio'
+    | '/programacao'
     | '/proxima-edicao'
     | '/reset-password'
     | '/sitemap.xml'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/edicoes-anteriores'
     | '/o-festival'
     | '/patrocinio'
+    | '/programacao'
     | '/proxima-edicao'
     | '/reset-password'
     | '/sitemap.xml'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/edicoes-anteriores'
     | '/o-festival'
     | '/patrocinio'
+    | '/programacao'
     | '/proxima-edicao'
     | '/reset-password'
     | '/sitemap.xml'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   EdicoesAnterioresRoute: typeof EdicoesAnterioresRoute
   OFestivalRoute: typeof OFestivalRoute
   PatrocinioRoute: typeof PatrocinioRoute
+  ProgramacaoRoute: typeof ProgramacaoRoute
   ProximaEdicaoRoute: typeof ProximaEdicaoRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/proxima-edicao'
       fullPath: '/proxima-edicao'
       preLoaderRoute: typeof ProximaEdicaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programacao': {
+      id: '/programacao'
+      path: '/programacao'
+      fullPath: '/programacao'
+      preLoaderRoute: typeof ProgramacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patrocinio': {
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   EdicoesAnterioresRoute: EdicoesAnterioresRoute,
   OFestivalRoute: OFestivalRoute,
   PatrocinioRoute: PatrocinioRoute,
+  ProgramacaoRoute: ProgramacaoRoute,
   ProximaEdicaoRoute: ProximaEdicaoRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
