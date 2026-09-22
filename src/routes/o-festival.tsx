@@ -25,6 +25,7 @@ function FestivalPage() {
   const image = useSiteImage();
   return (
     <SiteShell>
+      <div className="w-full overflow-x-hidden">
       <section className="relative overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[72svh]">
         <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={image("festival-hero")} alt="Artistas do Festival Aviva Cultura em apresentação na cidade" className="size-full object-cover" /></div>
         <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/75 md:to-brand-purple/10" />
