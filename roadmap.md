@@ -9,4 +9,4 @@
 - [x] Importar e vincular fotos e vídeos reais por edição
 - [x] Criar galerias nas páginas individuais das edições
 - [x] Reorganizar os banners da Home, O Festival e Patrocínio
-- [ ] Validar novamente desktop, celular, textos e mídias
+- [x] Validar novamente desktop, celular, textos e mídias
