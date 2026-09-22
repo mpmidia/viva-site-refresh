@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { EditionCard } from "@/components/edition-card";
 import { editionsQuery } from "@/lib/editions";
-import { festivalMedia } from "@/lib/festival-media";
+import { useSiteImage } from "@/hooks/useSiteImage";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -26,7 +27,6 @@ function HomePage() {
       <Hero />
       <FestivalIntro />
       <LatestEditions editions={editions.slice(0, 3)} />
-      <Gallery />
       <Invitation />
       <SponsorCall />
     </SiteShell>
@@ -34,9 +34,10 @@ function HomePage() {
 }
 
 function Hero() {
+  const image = useSiteImage();
   return (
     <section className="relative overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[calc(100svh-81px)]">
-      <div className="relative aspect-[4/3] overflow-hidden md:absolute md:inset-0 md:aspect-auto"><img src={festivalMedia.heroCrowd} alt="Público reunido em uma apresentação do Festival Aviva Cultura" className="festival-drift size-full object-cover object-center" /><div className="absolute inset-0 bg-brand-purple/10 md:bg-brand-purple/30" /></div>
+      <div className="relative aspect-[4/3] overflow-hidden md:absolute md:inset-0 md:aspect-auto"><img src={image("home-hero")} alt="Público reunido em uma apresentação do Festival Aviva Cultura" className="festival-drift size-full object-cover object-center" /><div className="absolute inset-0 bg-brand-purple/10 md:bg-brand-purple/30" /></div>
       <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/60 md:to-transparent" />
       <div className="relative mx-auto flex max-w-7xl items-center px-5 py-12 md:min-h-[calc(100svh-81px)] md:px-8 md:py-16">
         <div className="max-w-5xl">
@@ -51,6 +52,7 @@ function Hero() {
     </section>
   );
 }
+
 
 function FestivalIntro() {
   return (
@@ -80,33 +82,12 @@ function LatestEditions({ editions }: { editions: Awaited<ReturnType<typeof impo
   );
 }
 
-function Gallery() {
-  return (
-    <section className="overflow-hidden bg-brand-purple py-20 text-primary-foreground md:py-28">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <div className="grid gap-8 md:grid-cols-12 md:items-end">
-          <div className="md:col-span-5"><p className="text-sm font-bold uppercase text-brand-yellow">Veja. Escute. Sinta.</p><h2 className="mt-3 font-display text-4xl uppercase leading-tight md:text-6xl">O festival acontece por inteiro.</h2></div>
-          <p className="text-lg text-primary-foreground/75 md:col-span-4 md:col-start-9">Palco, rua, encontros, bastidores e a emoção de quem faz parte de cada edição.</p>
-        </div>
-        <div className="mt-12 grid auto-rows-[190px] grid-cols-2 gap-3 md:auto-rows-[260px] md:grid-cols-4">
-          <img src={festivalMedia.brassCity} alt="Apresentação musical do Aviva Cultura em espaço público" className="col-span-2 row-span-2 size-full object-cover" />
-          <div className="relative col-span-2 row-span-2 overflow-hidden md:col-span-2">
-            <video controls preload="metadata" poster={festivalMedia.performerStage} className="size-full object-cover"><source src={festivalMedia.film} type="video/mp4" /></video>
-            <span className="pointer-events-none absolute left-4 top-4 inline-flex items-center gap-2 bg-brand-pink px-3 py-2 text-xs font-bold uppercase"><Play className="size-4" /> O que é o Aviva</span>
-          </div>
-          <img src={festivalMedia.audienceTheater} alt="Público acompanhando espetáculo teatral" className="col-span-2 size-full object-cover md:col-span-1" />
-          <img src={festivalMedia.liveShow} alt="Artista em apresentação musical" className="size-full object-cover" />
-          <img src={festivalMedia.cityPerformance} alt="Performance artística em edição do festival" className="size-full object-cover" />
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Invitation() {
   return <section className="bg-brand-yellow py-20"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 px-5 md:flex-row md:items-end md:px-8"><h2 className="max-w-4xl font-display text-4xl uppercase leading-tight md:text-6xl">Mais do que um festival: um momento para desacelerar e se emocionar.</h2><Link to="/o-festival" className="inline-flex shrink-0 items-center gap-2 bg-foreground px-6 py-4 text-sm font-bold uppercase text-background">Conheça nossa história <ArrowRight className="size-5" /></Link></div></section>;
 }
 
 function SponsorCall() {
-  return <section className="relative overflow-hidden py-24 text-primary-foreground"><img src={festivalMedia.artistTalk} alt="Encontro cultural realizado pelo Festival Aviva Cultura" className="absolute inset-0 size-full object-cover" /><div className="absolute inset-0 bg-brand-pink/85" /><div className="relative mx-auto max-w-7xl px-5 md:px-8"><p className="text-sm font-bold uppercase text-brand-yellow">Patrocínio</p><h2 className="mt-4 max-w-4xl font-display text-4xl uppercase leading-tight md:text-6xl">Sua marca no centro da transformação cultural.</h2><Link to="/patrocinio" className="mt-8 inline-flex items-center gap-2 bg-brand-yellow px-6 py-4 text-sm font-bold uppercase text-foreground">Quero conhecer o projeto <ArrowRight className="size-5" /></Link></div></section>;
+  const image = useSiteImage();
+  return <section className="relative overflow-hidden py-24 text-primary-foreground"><img src={image("home-patrocinio")} alt="Encontro cultural realizado pelo Festival Aviva Cultura" className="absolute inset-0 size-full object-cover" /><div className="absolute inset-0 bg-brand-pink/85" /><div className="relative mx-auto max-w-7xl px-5 md:px-8"><p className="text-sm font-bold uppercase text-brand-yellow">Patrocínio</p><h2 className="mt-4 max-w-4xl font-display text-4xl uppercase leading-tight md:text-6xl">Sua marca no centro da transformação cultural.</h2><Link to="/patrocinio" className="mt-8 inline-flex items-center gap-2 bg-brand-yellow px-6 py-4 text-sm font-bold uppercase text-foreground">Quero conhecer o projeto <ArrowRight className="size-5" /></Link></div></section>;
 }

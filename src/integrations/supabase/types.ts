@@ -53,6 +53,54 @@ export type Database = {
         }
         Relationships: []
       }
+      next_edition: {
+        Row: {
+          capas: string[]
+          cidade: string | null
+          created_at: string
+          data_evento: string | null
+          id: string
+          inscricoes_abertura: string | null
+          locais: string[]
+          logos_url: string | null
+          possui_oficinas: boolean
+          programacao_data: string | null
+          regulamento_url: string | null
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          capas?: string[]
+          cidade?: string | null
+          created_at?: string
+          data_evento?: string | null
+          id?: string
+          inscricoes_abertura?: string | null
+          locais?: string[]
+          logos_url?: string | null
+          possui_oficinas?: boolean
+          programacao_data?: string | null
+          regulamento_url?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          capas?: string[]
+          cidade?: string | null
+          created_at?: string
+          data_evento?: string | null
+          id?: string
+          inscricoes_abertura?: string | null
+          locais?: string[]
+          logos_url?: string | null
+          possui_oficinas?: boolean
+          programacao_data?: string | null
+          regulamento_url?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -77,6 +125,174 @@ export type Database = {
           nome?: string | null
           telefone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      program_attractions: {
+        Row: {
+          created_at: string
+          data: string | null
+          descricao: string
+          horario: string | null
+          id: string
+          local: string | null
+          nome: string
+          publicado: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: string | null
+          descricao?: string
+          horario?: string | null
+          id?: string
+          local?: string | null
+          nome: string
+          publicado?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: string | null
+          descricao?: string
+          horario?: string | null
+          id?: string
+          local?: string | null
+          nome?: string
+          publicado?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      registration_cities: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      registrations: {
+        Row: {
+          categoria: string
+          cidade: string
+          classificacao: string
+          cpf: string
+          created_at: string
+          declaracoes: Json
+          descricao_trabalho: string
+          duracao_minutos: number | null
+          email: string
+          forma_cache: string
+          fotos: string[]
+          id: string
+          nome_artistico: string
+          oficina_descricao: string | null
+          oficina_faixas: string[]
+          oficina_materiais: string | null
+          oficina_participantes: number | null
+          oficina_titulo: string | null
+          redes_sociais: string | null
+          responsavel: string
+          titulo_trabalho: string
+          updated_at: string
+          video_url: string | null
+          whatsapp: string
+        }
+        Insert: {
+          categoria: string
+          cidade: string
+          classificacao: string
+          cpf: string
+          created_at?: string
+          declaracoes?: Json
+          descricao_trabalho: string
+          duracao_minutos?: number | null
+          email: string
+          forma_cache: string
+          fotos?: string[]
+          id?: string
+          nome_artistico: string
+          oficina_descricao?: string | null
+          oficina_faixas?: string[]
+          oficina_materiais?: string | null
+          oficina_participantes?: number | null
+          oficina_titulo?: string | null
+          redes_sociais?: string | null
+          responsavel: string
+          titulo_trabalho: string
+          updated_at?: string
+          video_url?: string | null
+          whatsapp: string
+        }
+        Update: {
+          categoria?: string
+          cidade?: string
+          classificacao?: string
+          cpf?: string
+          created_at?: string
+          declaracoes?: Json
+          descricao_trabalho?: string
+          duracao_minutos?: number | null
+          email?: string
+          forma_cache?: string
+          fotos?: string[]
+          id?: string
+          nome_artistico?: string
+          oficina_descricao?: string | null
+          oficina_faixas?: string[]
+          oficina_materiais?: string | null
+          oficina_participantes?: number | null
+          oficina_titulo?: string | null
+          redes_sociais?: string | null
+          responsavel?: string
+          titulo_trabalho?: string
+          updated_at?: string
+          video_url?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      site_images: {
+        Row: {
+          chave: string
+          created_at: string
+          id: string
+          rotulo: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          chave: string
+          created_at?: string
+          id?: string
+          rotulo: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          chave?: string
+          created_at?: string
+          id?: string
+          rotulo?: string
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }

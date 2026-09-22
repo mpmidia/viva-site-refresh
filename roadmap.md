@@ -10,3 +10,10 @@
 - [x] Criar galerias nas páginas individuais das edições
 - [x] Reorganizar os banners da Home, O Festival e Patrocínio
 - [x] Validar novamente desktop, celular, textos e mídias
+- [x] Remover o bloco "Veja. Escute. Sinta." da Home
+- [x] Área "Imagens do Projeto" no painel (upload, substituição, remoção, pré-visualização)
+- [x] Próxima Edição administrável (cidade, locais, datas, vídeo, capas em revezamento, regulamento, oficinas, barra de logos)
+- [x] Página e painel da Programação com estado "Em breve" automático
+- [x] Formulário de inscrição completo com validações, upload e botão do grupo de WhatsApp
+- [x] Painel de inscrições recebidas e cidades do formulário
+- [x] Validar desktop e celular dos novos fluxos
