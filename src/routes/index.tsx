@@ -27,7 +27,6 @@ function HomePage() {
       <Hero />
       <FestivalIntro />
       <LatestEditions editions={editions.slice(0, 3)} />
-      <Gallery />
       <Invitation />
       <SponsorCall />
     </SiteShell>
@@ -35,9 +34,10 @@ function HomePage() {
 }
 
 function Hero() {
+  const image = useSiteImage();
   return (
     <section className="relative overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[calc(100svh-81px)]">
-      <div className="relative aspect-[4/3] overflow-hidden md:absolute md:inset-0 md:aspect-auto"><img src={festivalMedia.heroCrowd} alt="Público reunido em uma apresentação do Festival Aviva Cultura" className="festival-drift size-full object-cover object-center" /><div className="absolute inset-0 bg-brand-purple/10 md:bg-brand-purple/30" /></div>
+      <div className="relative aspect-[4/3] overflow-hidden md:absolute md:inset-0 md:aspect-auto"><img src={image("home-hero")} alt="Público reunido em uma apresentação do Festival Aviva Cultura" className="festival-drift size-full object-cover object-center" /><div className="absolute inset-0 bg-brand-purple/10 md:bg-brand-purple/30" /></div>
       <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/60 md:to-transparent" />
       <div className="relative mx-auto flex max-w-7xl items-center px-5 py-12 md:min-h-[calc(100svh-81px)] md:px-8 md:py-16">
         <div className="max-w-5xl">
@@ -52,6 +52,7 @@ function Hero() {
     </section>
   );
 }
+
 
 function FestivalIntro() {
   return (
