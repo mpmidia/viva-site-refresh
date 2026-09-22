@@ -39,6 +39,7 @@ function FestivalPage() {
       <section className="bg-brand-purple py-20 text-primary-foreground md:py-28"><div className="mx-auto max-w-7xl px-5 md:px-8"><p className="text-sm font-bold uppercase text-brand-yellow">Resultados e impacto consolidado</p><h2 className="mt-4 max-w-4xl font-display text-4xl uppercase leading-tight md:text-6xl">Cultura que deixa marcas reais.</h2><div className="mt-12 grid border-l border-t border-primary-foreground/25 md:grid-cols-2 lg:grid-cols-4">{results.map((item) => <article key={item.title} className="border-b border-r border-primary-foreground/25 p-7"><p className="font-display text-5xl text-brand-yellow md:text-6xl">{item.number}</p><h3 className="mt-4 font-display text-xl uppercase">{item.title}</h3><p className="mt-3 text-primary-foreground/70">{item.text}</p></article>)}</div></div></section>
 
       <section className="bg-brand-yellow py-20 md:py-28"><div className="mx-auto max-w-6xl px-5 text-center md:px-8"><p className="font-display text-4xl uppercase leading-tight md:text-7xl">A arte como vetor de transformação: integrando talentos locais e fortalecendo a comunidade.</p></div></section>
+      </div>
     </SiteShell>
   );
 }
