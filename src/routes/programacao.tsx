@@ -60,7 +60,7 @@ function ProgramPage() {
                   <div className="mt-6 divide-y divide-border border-t border-border">
                     {byDay[day].map((item) => (
                       <article key={item.id} className="flex flex-col gap-2 py-6 md:flex-row md:gap-8">
-                        <p className="shrink-0 font-display text-xl text-brand-teal md:w-28">{item.horario ?? "--:--"}</p>
+                        {item.horario && <p className="shrink-0 font-display text-xl text-brand-teal md:w-28">{item.horario.slice(0, 5)}</p>}
                         <div>
                           <h3 className="font-display text-xl uppercase md:text-2xl">{item.nome}</h3>
                           {item.local && <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="size-4" /> {item.local}</p>}
