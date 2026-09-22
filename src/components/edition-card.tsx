@@ -1,14 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import type { Edition } from "@/lib/editions";
+import { getEditionMedia } from "@/lib/edition-media";
 
 export function EditionCard({ edition, showFullText = false }: { edition: Edition; showFullText?: boolean }) {
   const date = new Date(edition.data + "T00:00:00");
+  const image = getEditionMedia(edition.titulo)?.cover ?? edition.imagem_url;
   return (
     <article className="group overflow-hidden border-b border-border bg-card">
       <Link to="/edicoes/$id" params={{ id: edition.id }} className="block overflow-hidden">
-        {edition.imagem_url ? (
-          <img src={edition.imagem_url} alt={edition.titulo} className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
+        {image ? (
+          <img src={image} alt={`Registro da edição ${edition.titulo}`} className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
         ) : (
           <div className="aspect-[4/3] w-full bg-brand-pink" />
         )}

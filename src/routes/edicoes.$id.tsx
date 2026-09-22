@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useRouter, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowLeft, CalendarDays, MapPin, Users } from "lucide-react";
+import { ArrowLeft, CalendarDays, MapPin, Play, Users } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { editionByIdQuery } from "@/lib/editions";
+import { getEditionMedia } from "@/lib/edition-media";
 
 export const Route = createFileRoute("/edicoes/$id")({
   loader: async ({ context, params }) => {
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/edicoes/$id")({
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
     ];
-    if (edition.imagem_url) {
+    if (edition.imagem_url?.startsWith("https://")) {
       meta.push({ property: "og:image", content: edition.imagem_url });
       meta.push({ name: "twitter:image", content: edition.imagem_url });
     }
@@ -39,13 +40,15 @@ function EditionDetailPage() {
   const { edition } = Route.useLoaderData();
   const { data } = useSuspenseQuery(editionByIdQuery(edition.id));
   const e = data ?? edition;
+  const media = getEditionMedia(e.titulo);
+  const cover = media?.cover ?? e.imagem_url;
   const date = new Date(e.data + "T00:00:00");
   const dateStr = date.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
   return (
     <SiteShell>
       <section className="relative min-h-[62svh] overflow-hidden bg-brand-purple text-primary-foreground">
-        {e.imagem_url && <img src={e.imagem_url} alt="" className="absolute inset-0 size-full object-cover" />}
+        {cover && <img src={cover} alt={`Registro da edição ${e.titulo}`} className="absolute inset-0 size-full object-cover" />}
         <div className="absolute inset-0 bg-brand-purple/65" />
         <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-t from-brand-purple to-transparent" />
         <div className="relative mx-auto flex min-h-[62svh] max-w-7xl flex-col justify-end px-5 py-14 md:px-8 md:py-20">
@@ -68,10 +71,10 @@ function EditionDetailPage() {
       <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
         <div className="grid gap-12 md:grid-cols-[1.5fr_.75fr] md:items-start">
           <article className="space-y-5">
-            {e.imagem_url && (
+            {cover && (
               <img
-                src={e.imagem_url}
-                alt={e.titulo}
+                src={cover}
+                alt={`Registro da edição ${e.titulo}`}
                 className="aspect-video w-full object-cover"
               />
             )}
@@ -101,6 +104,31 @@ function EditionDetailPage() {
           </aside>
         </div>
       </section>
+
+      {media && media.images.length > 1 && (
+        <section className="bg-brand-cream py-16 md:py-24">
+          <div className="mx-auto max-w-7xl px-5 md:px-8">
+            <p className="text-sm font-bold uppercase text-brand-pink">Registros da edição</p>
+            <h2 className="mt-3 font-display text-4xl uppercase md:text-6xl">Momentos do festival</h2>
+            <div className="mt-10 grid auto-rows-[220px] grid-cols-2 gap-3 md:auto-rows-[320px] md:grid-cols-4">
+              {media.images.map((image, index) => (
+                <img key={image} src={image} alt={`Momento ${index + 1} da edição ${e.titulo}`} className={`size-full object-cover ${index === 0 ? "col-span-2 row-span-2" : "col-span-2 md:col-span-1"}`} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {media?.youtubeId && (
+        <section className="bg-brand-purple py-16 text-primary-foreground md:py-24">
+          <div className="mx-auto max-w-5xl px-5 md:px-8">
+            <div className="mb-8 flex items-center gap-3"><Play className="size-6 text-brand-yellow" /><h2 className="font-display text-3xl uppercase md:text-5xl">Assista à edição</h2></div>
+            <div className="aspect-video overflow-hidden bg-foreground">
+              <iframe className="size-full" src={`https://www.youtube-nocookie.com/embed/${media.youtubeId}`} title={`Vídeo da edição ${e.titulo}`} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
+            </div>
+          </div>
+        </section>
+      )}
     </SiteShell>
   );
 }
