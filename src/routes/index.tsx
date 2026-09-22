@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { EditionCard } from "@/components/edition-card";
 import { editionsQuery } from "@/lib/editions";
-import { festivalMedia } from "@/lib/festival-media";
+import { useSiteImage } from "@/hooks/useSiteImage";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
