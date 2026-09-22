@@ -135,7 +135,7 @@ export function NextEditionPanel() {
               ))}
             </div>
             <div className="mt-2 flex gap-2">
-              <input value={novoLocal} onChange={(e) => setNovoLocal(e.target.value)} placeholder="Novo local" className={inputCls} />
+              <input value={novoLocal} onChange={(e) => setNovoLocal(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (novoLocal.trim()) { setLocais([...locais, novoLocal.trim()]); setNovoLocal(""); } } }} placeholder="Novo local" className={inputCls} />
               <button type="button" onClick={() => { if (novoLocal.trim()) { setLocais([...locais, novoLocal.trim()]); setNovoLocal(""); } }} className={ghostBtn}><Plus className="size-4" /></button>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">Estes locais alimentam automaticamente o campo “Local” da programação.</p>
