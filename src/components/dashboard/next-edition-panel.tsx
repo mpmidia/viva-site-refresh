@@ -44,7 +44,7 @@ export function NextEditionPanel() {
   };
   useEffect(() => { void load(); }, []);
 
-  const persist = async (patch: Record<string, unknown>) => {
+  const persist = async (patch: Partial<NextEdition>) => {
     if (!row) return;
     const { error } = await supabase.from("next_edition").update(patch).eq("id", row.id);
     if (error) { toast.error(error.message); return false; }
