@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ArrowDown, ArrowUp, FileText, Plus, Trash2, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchNextEdition, type NextEdition } from "@/lib/site-content";
+import { fetchNextEdition, type NextEdition, type NextEditionRow } from "@/lib/site-content";
 import { SITE_BUCKET, removeFile, signPaths, uploadFile } from "@/lib/storage";
 import { Card, FField, ghostBtn, inputCls, primaryBtn } from "./ui";
 
@@ -44,7 +44,7 @@ export function NextEditionPanel() {
   };
   useEffect(() => { void load(); }, []);
 
-  const persist = async (patch: Partial<NextEdition>) => {
+  const persist = async (patch: Partial<NextEditionRow>) => {
     if (!row) return;
     const { error } = await supabase.from("next_edition").update(patch).eq("id", row.id);
     if (error) { toast.error(error.message); return false; }
