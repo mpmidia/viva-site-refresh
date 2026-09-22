@@ -16,7 +16,6 @@ export const Route = createFileRoute("/edicoes/$id")({
       return { meta: [{ title: "Edição não encontrada — Aviva Cultura" }, { name: "robots", content: "noindex" }] };
     }
     const { edition } = loaderData;
-    const media = getEditionMedia(edition.titulo);
     const desc = edition.descricao.slice(0, 155);
     const meta: Array<Record<string, string>> = [
       { title: `${edition.titulo} — Aviva Cultura` },

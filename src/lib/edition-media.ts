@@ -42,6 +42,7 @@ import PindamonhangabaSp0 from "@/assets/editions/pindamonhangaba-sp/cover.jpeg.
 import PindamonhangabaSp1 from "@/assets/editions/pindamonhangaba-sp/gallery-2.jpeg.asset.json";
 import PindamonhangabaSp2 from "@/assets/editions/pindamonhangaba-sp/gallery-3.jpeg.asset.json";
 import PindamonhangabaSp3 from "@/assets/editions/pindamonhangaba-sp/gallery-4.jpeg.asset.json";
+import SumareSp0 from "@/assets/editions/sumare-sp/cover.jpg.asset.json";
 import SumareSp1 from "@/assets/editions/sumare-sp/gallery-1.jpeg.asset.json";
 import SumareSp2 from "@/assets/editions/sumare-sp/gallery-2.jpeg.asset.json";
 import SumareSp3 from "@/assets/editions/sumare-sp/gallery-3.jpeg.asset.json";
