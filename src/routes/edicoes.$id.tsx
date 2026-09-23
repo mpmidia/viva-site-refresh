@@ -76,8 +76,7 @@ function EditionDetailPage() {
         <article className="mx-auto max-w-5xl">
           <div className="grid gap-5 border-b border-border pb-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:pb-10">
             <div className="min-w-0">
-              <p className="text-sm font-bold uppercase text-brand-teal">Sobre esta edição</p>
-              <h2 className="mt-3 max-w-3xl font-display text-3xl uppercase leading-tight sm:text-4xl md:text-6xl">Arte que ocupa a cidade</h2>
+              <h2 className="max-w-3xl font-display text-3xl uppercase leading-tight sm:text-4xl md:text-6xl">Sobre esta edição</h2>
             </div>
             {e.inscricao_url && (
               <a href={e.inscricao_url} target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center justify-center bg-brand-pink px-6 py-4 text-sm font-bold uppercase text-primary-foreground transition hover:opacity-90">
