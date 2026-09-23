@@ -420,6 +420,30 @@ export type Database = {
         }
         Relationships: []
       }
+      sponsorship_settings: {
+        Row: {
+          created_at: string
+          id: string
+          midia_kit_path: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          midia_kit_path?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          midia_kit_path?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
