@@ -44,7 +44,8 @@ function EditionDetailPage() {
   const cover = e.coverUrl ?? gallery[0] ?? legacy?.cover ?? null;
   const rest = gallery.filter((src) => src !== cover);
 
-  const videoSrc = e.video_url ?? (legacy?.youtubeId ? `https://youtu.be/${legacy.youtubeId}` : null);
+  // O vídeo só aparece quando foi explicitamente cadastrado pela equipe.
+  const videoSrc = e.video_url?.trim() || null;
   const hasVideo = Boolean(toEmbedUrl(videoSrc));
 
   const dateStr = new Date(e.data + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
