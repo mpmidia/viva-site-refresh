@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchAllAttractions, fetchNextEdition, type AttractionView } from "@/lib/site-content";
+import { fetchAllAttractions, fetchNextEditions, type AttractionView, type NextEdition } from "@/lib/site-content";
 import { SITE_BUCKET, removeFile } from "@/lib/storage";
 import { ImageManager } from "./image-manager";
 import { FField, ghostBtn, inputCls, primaryBtn } from "./ui";
@@ -16,13 +16,20 @@ export function ProgramPanel() {
   const queryClient = useQueryClient();
   const [items, setItems] = useState<AttractionView[]>([]);
   const [locais, setLocais] = useState<string[]>([]);
+  const [editions, setEditions] = useState<NextEdition[]>([]);
+  const [editionId, setEditionId] = useState("");
   const [editing, setEditing] = useState<Draft | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const load = async () => {
+  const load = async (selectedId = editionId) => {
     setLoading(true);
     try {
-      const [list, next] = await Promise.all([fetchAllAttractions(), fetchNextEdition()]);
+      const nextEditions = await fetchNextEditions();
+      const activeId = selectedId || nextEditions[0]?.id || "";
+      const list = activeId ? await fetchAllAttractions(activeId) : [];
+      const next = nextEditions.find((item) => item.id === activeId);
+      setEditions(nextEditions);
+      setEditionId(activeId);
       setItems(list);
       setLocais(next?.locais ?? []);
       await queryClient.invalidateQueries({ queryKey: ["attractions"] });
@@ -32,7 +39,7 @@ export function ProgramPanel() {
       setLoading(false);
     }
   };
-  useEffect(() => { void load(); }, []);
+  useEffect(() => { void load(""); }, []);
 
   const save = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -45,6 +52,7 @@ export function ProgramPanel() {
       horario: editing.horario || null,
       imagem_url: editing.imagem_url,
       publicado: editing.publicado,
+      next_edition_id: editionId,
     };
     const { error } = editing.id
       ? await supabase.from("program_attractions").update(payload).eq("id", editing.id)
@@ -52,13 +60,13 @@ export function ProgramPanel() {
     if (error) return toast.error(error.message);
     toast.success("Atração salva.");
     setEditing(null);
-    await load();
+    await load(editionId);
   };
 
   const togglePublish = async (item: AttractionView) => {
     const { error } = await supabase.from("program_attractions").update({ publicado: !item.publicado }).eq("id", item.id);
     if (error) return toast.error(error.message);
-    await load();
+    await load(editionId);
   };
 
   const remove = async (item: AttractionView) => {
@@ -67,7 +75,7 @@ export function ProgramPanel() {
     if (error) return toast.error(error.message);
     if (item.imagem_url) await removeFile(SITE_BUCKET, item.imagem_url);
     toast.success("Atração removida.");
-    await load();
+    await load(editionId);
   };
 
   return (
@@ -77,8 +85,16 @@ export function ProgramPanel() {
           <h2 className="font-display text-2xl">Programação</h2>
           <p className="text-sm text-muted-foreground">Só atrações publicadas aparecem no site. Sem nenhuma publicada, a página mostra “Em breve”.</p>
         </div>
-        <button onClick={() => setEditing({ ...empty })} className={primaryBtn}><Plus className="mr-1 inline size-4" />Nova atração</button>
+        <button disabled={!editionId} onClick={() => setEditing({ ...empty })} className={primaryBtn}><Plus className="mr-1 inline size-4" />Nova atração</button>
       </div>
+
+      <label className="mt-5 block max-w-md">
+        <span className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">Edição da programação</span>
+        <select value={editionId} onChange={(e) => void load(e.target.value)} className={inputCls}>
+          <option value="">Selecione uma edição</option>
+          {editions.map((edition) => <option key={edition.id} value={edition.id}>{edition.cidade || "Edição sem cidade"}</option>)}
+        </select>
+      </label>
 
       {locais.length === 0 && <p className="mt-4 rounded-2xl bg-brand-yellow/30 p-4 text-sm">Cadastre os locais na aba “Próxima Edição” para poder selecioná-los aqui.</p>}
 

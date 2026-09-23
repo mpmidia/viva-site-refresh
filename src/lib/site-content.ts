@@ -61,16 +61,7 @@ export type NextEdition = NextEditionRow & {
 const NEXT_FIELDS =
   "id, cidade, data_evento, data_fim, locais, capas, inscricoes_abertura, inscricoes_encerramento, regulamento_url, programacao_data, possui_oficinas, logos_url";
 
-export async function fetchNextEdition(): Promise<NextEdition | null> {
-  const { data, error } = await supabase
-    .from("next_edition")
-    .select(NEXT_FIELDS)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) return null;
-  const row = data as unknown as NextEditionRow;
+async function hydrateNextEdition(row: NextEditionRow): Promise<NextEdition> {
   const signed = await signPaths(SITE_BUCKET, row.capas ?? []);
   return {
     ...row,
@@ -82,7 +73,25 @@ export async function fetchNextEdition(): Promise<NextEdition | null> {
   };
 }
 
-export const nextEditionQuery = () => queryOptions({ queryKey: ["next-edition"], queryFn: fetchNextEdition, staleTime: 15_000 });
+export async function fetchNextEditions(): Promise<NextEdition[]> {
+  const { data, error } = await supabase
+    .from("next_edition")
+    .select(NEXT_FIELDS)
+    .order("data_evento", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return Promise.all(((data ?? []) as unknown as NextEditionRow[]).map(hydrateNextEdition));
+}
+
+export async function fetchNextEdition(id?: string): Promise<NextEdition | null> {
+  if (!id) return (await fetchNextEditions())[0] ?? null;
+  const { data, error } = await supabase.from("next_edition").select(NEXT_FIELDS).eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data ? hydrateNextEdition(data as unknown as NextEditionRow) : null;
+}
+
+export const nextEditionsQuery = () => queryOptions({ queryKey: ["next-editions"], queryFn: fetchNextEditions, staleTime: 15_000 });
+export const nextEditionQuery = (id?: string) => queryOptions({ queryKey: ["next-edition", id ?? "first"], queryFn: () => fetchNextEdition(id), staleTime: 15_000 });
 
 /** A próxima edição só é considerada anunciada quando tem cidade ou período. */
 export function hasAnnouncement(next: NextEdition | null | undefined) {
@@ -154,6 +163,7 @@ export type Attraction = {
   horario: string | null;
   imagem_url: string | null;
   publicado: boolean;
+  next_edition_id: string;
 };
 
 export type AttractionView = Attraction & { imagemUrl: string | null };
@@ -163,10 +173,11 @@ async function withImages(rows: Attraction[]): Promise<AttractionView[]> {
   return rows.map((r) => ({ ...r, imagemUrl: r.imagem_url ? signed[r.imagem_url] ?? null : null }));
 }
 
-export async function fetchPublishedAttractions(): Promise<AttractionView[]> {
+export async function fetchPublishedAttractions(editionId: string): Promise<AttractionView[]> {
   const { data, error } = await supabase
     .from("program_attractions")
     .select("*")
+    .eq("next_edition_id", editionId)
     .eq("publicado", true)
     .order("data", { ascending: true })
     .order("horario", { ascending: true });
@@ -174,57 +185,58 @@ export async function fetchPublishedAttractions(): Promise<AttractionView[]> {
   return withImages((data ?? []) as unknown as Attraction[]);
 }
 
-export async function fetchAllAttractions(): Promise<AttractionView[]> {
+export async function fetchAllAttractions(editionId: string): Promise<AttractionView[]> {
   const { data, error } = await supabase
     .from("program_attractions")
     .select("*")
+    .eq("next_edition_id", editionId)
     .order("data", { ascending: true })
     .order("horario", { ascending: true });
   if (error) throw error;
   return withImages((data ?? []) as unknown as Attraction[]);
 }
 
-export const attractionsQuery = () => queryOptions({ queryKey: ["attractions"], queryFn: fetchPublishedAttractions, staleTime: 15_000 });
+export const attractionsQuery = (editionId: string) => queryOptions({ queryKey: ["attractions", editionId], queryFn: () => fetchPublishedAttractions(editionId), enabled: Boolean(editionId), staleTime: 15_000 });
 
 /* ---------- Cidades do formulário ---------- */
 
-export type RegistrationCity = { id: string; nome: string; ordem: number };
+export type RegistrationCity = { id: string; nome: string; ordem: number; next_edition_id: string };
 
-export async function fetchCities(): Promise<RegistrationCity[]> {
-  const { data, error } = await supabase.from("registration_cities").select("*").order("ordem", { ascending: true });
+export async function fetchCities(editionId: string): Promise<RegistrationCity[]> {
+  const { data, error } = await supabase.from("registration_cities").select("*").eq("next_edition_id", editionId).order("ordem", { ascending: true });
   if (error) throw error;
   return (data ?? []) as RegistrationCity[];
 }
 
-export const citiesQuery = () => queryOptions({ queryKey: ["registration-cities"], queryFn: fetchCities, staleTime: 30_000 });
+export const citiesQuery = (editionId: string) => queryOptions({ queryKey: ["registration-cities", editionId], queryFn: () => fetchCities(editionId), enabled: Boolean(editionId), staleTime: 30_000 });
 
-/* ---------- Categorias e formas de pagamento ---------- */
+/* ---------- Categorias e formas de recebimento do cachê ---------- */
 
-export type RegistrationCategory = { id: string; nome: string; valor: number | null; ordem: number };
+export type RegistrationCategory = { id: string; nome: string; valor: number | null; ordem: number; next_edition_id: string };
 
-export async function fetchCategories(): Promise<RegistrationCategory[]> {
-  const { data, error } = await supabase.from("registration_categories").select("id, nome, valor, ordem").order("ordem", { ascending: true });
+export async function fetchCategories(editionId: string): Promise<RegistrationCategory[]> {
+  const { data, error } = await supabase.from("registration_categories").select("id, nome, valor, ordem, next_edition_id").eq("next_edition_id", editionId).order("ordem", { ascending: true });
   if (error) throw error;
-  return ((data ?? []) as Array<{ id: string; nome: string; valor: number | string | null; ordem: number }>).map((c) => ({
+  return ((data ?? []) as Array<{ id: string; nome: string; valor: number | string | null; ordem: number; next_edition_id: string }>).map((c) => ({
     ...c,
     valor: c.valor === null ? null : Number(c.valor),
   }));
 }
 
-export const categoriesQuery = () => queryOptions({ queryKey: ["registration-categories"], queryFn: fetchCategories, staleTime: 30_000 });
+export const categoriesQuery = (editionId: string) => queryOptions({ queryKey: ["registration-categories", editionId], queryFn: () => fetchCategories(editionId), enabled: Boolean(editionId), staleTime: 30_000 });
 
-export type PaymentMethod = { id: string; nome: string; ativo: boolean; ordem: number };
+export type PaymentMethod = { id: string; nome: string; ativo: boolean; ordem: number; next_edition_id: string };
 
-export async function fetchPaymentMethods(activeOnly = false): Promise<PaymentMethod[]> {
-  let q = supabase.from("payment_methods").select("id, nome, ativo, ordem").order("ordem", { ascending: true });
+export async function fetchPaymentMethods(editionId: string, activeOnly = false): Promise<PaymentMethod[]> {
+  let q = supabase.from("payment_methods").select("id, nome, ativo, ordem, next_edition_id").eq("next_edition_id", editionId).order("ordem", { ascending: true });
   if (activeOnly) q = q.eq("ativo", true);
   const { data, error } = await q;
   if (error) throw error;
   return (data ?? []) as PaymentMethod[];
 }
 
-export const paymentMethodsQuery = (activeOnly = false) =>
-  queryOptions({ queryKey: ["payment-methods", activeOnly], queryFn: () => fetchPaymentMethods(activeOnly), staleTime: 30_000 });
+export const paymentMethodsQuery = (editionId: string, activeOnly = false) =>
+  queryOptions({ queryKey: ["payment-methods", editionId, activeOnly], queryFn: () => fetchPaymentMethods(editionId, activeOnly), enabled: Boolean(editionId), staleTime: 30_000 });
 
 export function formatMoney(value: number | null) {
   if (value === null || Number.isNaN(value)) return null;

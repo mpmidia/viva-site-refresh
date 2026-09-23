@@ -6,7 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   fetchCategories,
   fetchCities,
+  fetchNextEditions,
   fetchPaymentMethods,
+  type NextEdition,
   type PaymentMethod,
   type RegistrationCategory,
   type RegistrationCity,
@@ -20,6 +22,7 @@ type Registration = {
   descricao_trabalho: string; fotos: string[]; video_url: string | null; redes_sociais: string | null;
   duracao_minutos: number | null; classificacao: string; oficina_titulo: string | null; oficina_descricao: string | null;
   oficina_faixas: string[]; oficina_participantes: number | null; oficina_materiais: string | null;
+  next_edition_id: string;
 };
 
 export function RegistrationsPanel() {
@@ -34,18 +37,24 @@ export function RegistrationsPanel() {
   const [novaCategoria, setNovaCategoria] = useState("");
   const [novoValor, setNovoValor] = useState("");
   const [novaForma, setNovaForma] = useState("");
+  const [editions, setEditions] = useState<NextEdition[]>([]);
+  const [editionId, setEditionId] = useState("");
 
-  const load = async () => {
-    const { data, error } = await supabase.from("registrations").select("*").order("created_at", { ascending: false });
+  const load = async (selectedId = editionId) => {
+    const nextEditions = await fetchNextEditions();
+    const activeId = selectedId || nextEditions[0]?.id || "";
+    setEditions(nextEditions); setEditionId(activeId);
+    if (!activeId) { setItems([]); setCities([]); setCategories([]); setPayments([]); return; }
+    const { data, error } = await supabase.from("registrations").select("*").eq("next_edition_id", activeId).order("created_at", { ascending: false });
     if (error) toast.error(error.message);
     setItems((data ?? []) as Registration[]);
-    const [c, cat, pay] = await Promise.all([fetchCities(), fetchCategories(), fetchPaymentMethods()]);
+    const [c, cat, pay] = await Promise.all([fetchCities(activeId), fetchCategories(activeId), fetchPaymentMethods(activeId)]);
     setCities(c); setCategories(cat); setPayments(pay);
     await queryClient.invalidateQueries({ queryKey: ["registration-cities"] });
     await queryClient.invalidateQueries({ queryKey: ["registration-categories"] });
     await queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
   };
-  useEffect(() => { void load(); }, []);
+  useEffect(() => { void load(""); }, []);
 
   const openDetails = async (item: Registration) => {
     setOpen(item);
@@ -55,7 +64,7 @@ export function RegistrationsPanel() {
   /* Cidades */
   const addCity = async () => {
     if (!novaCidade.trim()) return;
-    const { error } = await supabase.from("registration_cities").insert({ nome: novaCidade.trim(), ordem: cities.length + 1 });
+    const { error } = await supabase.from("registration_cities").insert({ nome: novaCidade.trim(), ordem: cities.length + 1, next_edition_id: editionId });
     if (error) return toast.error(error.message);
     setNovaCidade("");
     await load();
@@ -75,7 +84,7 @@ export function RegistrationsPanel() {
   const addCategory = async () => {
     if (!novaCategoria.trim()) return;
     const valor = novoValor.trim() ? Number(novoValor.replace(",", ".")) : null;
-    const { error } = await supabase.from("registration_categories").insert({ nome: novaCategoria.trim(), valor, ordem: categories.length + 1 });
+    const { error } = await supabase.from("registration_categories").insert({ nome: novaCategoria.trim(), valor, ordem: categories.length + 1, next_edition_id: editionId });
     if (error) return toast.error(error.message);
     setNovaCategoria(""); setNovoValor("");
     await load();
@@ -92,10 +101,10 @@ export function RegistrationsPanel() {
     await load();
   };
 
-  /* Formas de pagamento */
+  /* Formas de recebimento do cachê */
   const addPayment = async () => {
     if (!novaForma.trim()) return;
-    const { error } = await supabase.from("payment_methods").insert({ nome: novaForma.trim(), ativo: true, ordem: payments.length + 1 });
+    const { error } = await supabase.from("payment_methods").insert({ nome: novaForma.trim(), ativo: true, ordem: payments.length + 1, next_edition_id: editionId });
     if (error) return toast.error(error.message);
     setNovaForma("");
     await load();
@@ -117,6 +126,14 @@ export function RegistrationsPanel() {
         <h2 className="font-display text-2xl">Inscrições</h2>
         <p className="text-sm text-muted-foreground">Configuração do formulário e inscrições recebidas pelo site.</p>
       </div>
+
+      <label className="block max-w-md">
+        <span className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">Edição das inscrições</span>
+        <select value={editionId} onChange={(e) => void load(e.target.value)} className={inputCls}>
+          <option value="">Selecione uma edição</option>
+          {editions.map((edition) => <option key={edition.id} value={edition.id}>{edition.cidade || "Edição sem cidade"}</option>)}
+        </select>
+      </label>
 
       <Card title="Cidades do formulário" description="As alterações aparecem imediatamente na lista de cidades do formulário.">
         <div className="space-y-2">
@@ -158,7 +175,7 @@ export function RegistrationsPanel() {
         </div>
       </Card>
 
-      <Card title="Formas de pagamento" description="Marque as formas disponíveis nesta edição. Só as marcadas aparecem no site.">
+      <Card title="Formas de recebimento do cachê" description="Marque as opções aceitas para responder como o artista pretende receber o cachê.">
         <div className="space-y-2">
           {payments.map((p) => (
             <div key={p.id} className="flex items-center justify-between gap-2 rounded-2xl border px-4 py-2">
@@ -170,7 +187,7 @@ export function RegistrationsPanel() {
           ))}
         </div>
         <div className="mt-3 flex gap-2">
-          <input value={novaForma} onChange={(e) => setNovaForma(e.target.value)} placeholder="Nova forma de pagamento" className={inputCls} />
+          <input value={novaForma} onChange={(e) => setNovaForma(e.target.value)} placeholder="Nova forma de recebimento" className={inputCls} />
           <button onClick={() => void addPayment()} className={ghostBtn}><Plus className="size-4" /></button>
         </div>
       </Card>

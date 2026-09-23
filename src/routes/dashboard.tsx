@@ -63,7 +63,7 @@ function DashboardPage() {
         </div>
         <div className="mx-auto flex max-w-6xl flex-wrap gap-2 px-4 pb-3">
           <TabButton active={tab === "editions"} onClick={() => setTab("editions")}>Edições</TabButton>
-          <TabButton active={tab === "next"} onClick={() => setTab("next")}>Próxima Edição</TabButton>
+          <TabButton active={tab === "next"} onClick={() => setTab("next")}>Próximas Edições</TabButton>
           <TabButton active={tab === "program"} onClick={() => setTab("program")}>Programação</TabButton>
           <TabButton active={tab === "registrations"} onClick={() => setTab("registrations")}>Inscrições</TabButton>
           <TabButton active={tab === "images"} onClick={() => setTab("images")}>Imagens</TabButton>
