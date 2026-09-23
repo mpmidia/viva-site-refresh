@@ -20,6 +20,8 @@ export async function uploadFile(bucket: string, folder: string, file: File): Pr
 }
 
 export async function removeFile(bucket: string, path: string) {
+  // Imagens do layout original são servidas pelo próprio site e não ficam no armazenamento.
+  if (!path || path.startsWith("http") || path.startsWith("/")) return;
   await supabase.storage.from(bucket).remove([path]);
 }
 
