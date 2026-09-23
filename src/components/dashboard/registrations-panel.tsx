@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, fetchCities, type RegistrationCity } from "@/lib/site-content";
+import {
+  fetchCategories,
+  fetchCities,
+  fetchPaymentMethods,
+  type PaymentMethod,
+  type RegistrationCategory,
+  type RegistrationCity,
+} from "@/lib/site-content";
 import { FORM_BUCKET, signPaths } from "@/lib/storage";
 import { Card, ghostBtn, inputCls, primaryBtn } from "./ui";
 
@@ -15,17 +23,27 @@ type Registration = {
 };
 
 export function RegistrationsPanel() {
+  const queryClient = useQueryClient();
   const [items, setItems] = useState<Registration[]>([]);
   const [open, setOpen] = useState<Registration | null>(null);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [cities, setCities] = useState<RegistrationCity[]>([]);
+  const [categories, setCategories] = useState<RegistrationCategory[]>([]);
+  const [payments, setPayments] = useState<PaymentMethod[]>([]);
   const [novaCidade, setNovaCidade] = useState("");
+  const [novaCategoria, setNovaCategoria] = useState("");
+  const [novoValor, setNovoValor] = useState("");
+  const [novaForma, setNovaForma] = useState("");
 
   const load = async () => {
     const { data, error } = await supabase.from("registrations").select("*").order("created_at", { ascending: false });
     if (error) toast.error(error.message);
     setItems((data ?? []) as Registration[]);
-    setCities(await fetchCities());
+    const [c, cat, pay] = await Promise.all([fetchCities(), fetchCategories(), fetchPaymentMethods()]);
+    setCities(c); setCategories(cat); setPayments(pay);
+    await queryClient.invalidateQueries({ queryKey: ["registration-cities"] });
+    await queryClient.invalidateQueries({ queryKey: ["registration-categories"] });
+    await queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
   };
   useEffect(() => { void load(); }, []);
 
@@ -34,6 +52,7 @@ export function RegistrationsPanel() {
     setPhotoUrls(await signPaths(FORM_BUCKET, item.fotos ?? []));
   };
 
+  /* Cidades */
   const addCity = async () => {
     if (!novaCidade.trim()) return;
     const { error } = await supabase.from("registration_cities").insert({ nome: novaCidade.trim(), ordem: cities.length + 1 });
@@ -41,14 +60,53 @@ export function RegistrationsPanel() {
     setNovaCidade("");
     await load();
   };
-
   const renameCity = async (id: string, nome: string) => {
     const { error } = await supabase.from("registration_cities").update({ nome }).eq("id", id);
-    if (error) toast.error(error.message);
+    if (error) return toast.error(error.message);
+    await load();
   };
-
   const removeCity = async (id: string) => {
     const { error } = await supabase.from("registration_cities").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    await load();
+  };
+
+  /* Categorias */
+  const addCategory = async () => {
+    if (!novaCategoria.trim()) return;
+    const valor = novoValor.trim() ? Number(novoValor.replace(",", ".")) : null;
+    const { error } = await supabase.from("registration_categories").insert({ nome: novaCategoria.trim(), valor, ordem: categories.length + 1 });
+    if (error) return toast.error(error.message);
+    setNovaCategoria(""); setNovoValor("");
+    await load();
+  };
+  const updateCategory = async (id: string, patch: { nome?: string; valor?: number | null }) => {
+    const { error } = await supabase.from("registration_categories").update(patch).eq("id", id);
+    if (error) return toast.error(error.message);
+    await load();
+  };
+  const removeCategory = async (id: string) => {
+    if (!confirm("Excluir esta categoria?")) return;
+    const { error } = await supabase.from("registration_categories").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    await load();
+  };
+
+  /* Formas de pagamento */
+  const addPayment = async () => {
+    if (!novaForma.trim()) return;
+    const { error } = await supabase.from("payment_methods").insert({ nome: novaForma.trim(), ativo: true, ordem: payments.length + 1 });
+    if (error) return toast.error(error.message);
+    setNovaForma("");
+    await load();
+  };
+  const togglePayment = async (id: string, ativo: boolean) => {
+    const { error } = await supabase.from("payment_methods").update({ ativo }).eq("id", id);
+    if (error) return toast.error(error.message);
+    await load();
+  };
+  const removePayment = async (id: string) => {
+    const { error } = await supabase.from("payment_methods").delete().eq("id", id);
     if (error) return toast.error(error.message);
     await load();
   };
@@ -57,14 +115,14 @@ export function RegistrationsPanel() {
     <div className="space-y-6">
       <div>
         <h2 className="font-display text-2xl">Inscrições</h2>
-        <p className="text-sm text-muted-foreground">Inscrições recebidas pelo formulário do site e configuração das cidades disponíveis.</p>
+        <p className="text-sm text-muted-foreground">Configuração do formulário e inscrições recebidas pelo site.</p>
       </div>
 
       <Card title="Cidades do formulário" description="As alterações aparecem imediatamente na lista de cidades do formulário.">
         <div className="space-y-2">
           {cities.map((city) => (
             <div key={city.id} className="flex items-center gap-2">
-              <input defaultValue={city.nome} onBlur={(e) => void renameCity(city.id, e.target.value)} className={inputCls} />
+              <input defaultValue={city.nome} onBlur={(e) => { if (e.target.value !== city.nome) void renameCity(city.id, e.target.value); }} className={inputCls} />
               <button onClick={() => void removeCity(city.id)} className="rounded-full border border-destructive/30 p-2 text-destructive"><Trash2 className="size-4" /></button>
             </div>
           ))}
@@ -75,8 +133,46 @@ export function RegistrationsPanel() {
         </div>
       </Card>
 
-      <Card title="Categorias e valores">
-        <ul className="space-y-2 text-sm text-foreground/80">{CATEGORIES.map((c) => <li key={c.id}>• {c.label}</li>)}</ul>
+      <Card title="Categorias e valores" description="Aparecem como opções de categoria no formulário público de inscrição.">
+        <div className="space-y-2">
+          {categories.map((cat) => (
+            <div key={cat.id} className="flex flex-wrap items-center gap-2">
+              <input defaultValue={cat.nome} onBlur={(e) => { if (e.target.value !== cat.nome) void updateCategory(cat.id, { nome: e.target.value }); }} className={inputCls + " min-w-[200px] flex-1"} />
+              <input
+                defaultValue={cat.valor ?? ""}
+                type="number"
+                step="0.01"
+                placeholder="Valor"
+                onBlur={(e) => { const v = e.target.value.trim() ? Number(e.target.value) : null; if (v !== cat.valor) void updateCategory(cat.id, { valor: v }); }}
+                className={inputCls + " w-36"}
+              />
+              <button onClick={() => void removeCategory(cat.id)} className="rounded-full border border-destructive/30 p-2 text-destructive"><Trash2 className="size-4" /></button>
+            </div>
+          ))}
+          {categories.length === 0 && <p className="text-sm text-muted-foreground">Nenhuma categoria cadastrada.</p>}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <input value={novaCategoria} onChange={(e) => setNovaCategoria(e.target.value)} placeholder="Nova categoria" className={inputCls + " min-w-[200px] flex-1"} />
+          <input value={novoValor} onChange={(e) => setNovoValor(e.target.value)} type="number" step="0.01" placeholder="Valor" className={inputCls + " w-36"} />
+          <button onClick={() => void addCategory()} className={ghostBtn}><Plus className="size-4" /></button>
+        </div>
+      </Card>
+
+      <Card title="Formas de pagamento" description="Marque as formas disponíveis nesta edição. Só as marcadas aparecem no site.">
+        <div className="space-y-2">
+          {payments.map((p) => (
+            <div key={p.id} className="flex items-center justify-between gap-2 rounded-2xl border px-4 py-2">
+              <label className="flex items-center gap-3 text-sm font-semibold">
+                <input type="checkbox" checked={p.ativo} onChange={(e) => void togglePayment(p.id, e.target.checked)} /> {p.nome}
+              </label>
+              <button onClick={() => void removePayment(p.id)} className="rounded-full border border-destructive/30 p-2 text-destructive"><Trash2 className="size-4" /></button>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex gap-2">
+          <input value={novaForma} onChange={(e) => setNovaForma(e.target.value)} placeholder="Nova forma de pagamento" className={inputCls} />
+          <button onClick={() => void addPayment()} className={ghostBtn}><Plus className="size-4" /></button>
+        </div>
       </Card>
 
       <div>
@@ -89,7 +185,7 @@ export function RegistrationsPanel() {
               <button key={item.id} onClick={() => void openDetails(item)} className="block w-full rounded-2xl border bg-card p-5 text-left hover:border-brand-pink">
                 <div className="flex flex-wrap items-center gap-2">
                   <h4 className="font-display text-lg">{item.nome_artistico}</h4>
-                  <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-xs font-bold">Categoria {item.categoria}</span>
+                  <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-xs font-bold">{item.categoria}</span>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{item.titulo_trabalho} · {item.cidade} · {new Date(item.created_at).toLocaleDateString("pt-BR")}</p>
               </button>

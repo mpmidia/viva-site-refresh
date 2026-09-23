@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CalendarDays, MapPin, Users, Pencil, Trash2, Plus, LogOut, User as UserIcon, ArrowLeft } from "lucide-react";
+import { LogOut, User as UserIcon, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchEditions, type Edition } from "@/lib/editions";
+import { EditionsPanel } from "@/components/dashboard/editions-panel";
 import { NextEditionPanel } from "@/components/dashboard/next-edition-panel";
 import { ProgramPanel } from "@/components/dashboard/program-panel";
 import { RegistrationsPanel } from "@/components/dashboard/registrations-panel";
@@ -91,143 +91,6 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
   );
 }
 
-/* --- Editions --- */
-
-const emptyEdition: Omit<Edition, "id" | "created_at" | "updated_at"> = {
-  titulo: "", data: new Date().toISOString().slice(0, 10), local: "", participantes: 0,
-  descricao: "", inscricao_url: "", imagem_url: "",
-};
-
-function EditionsPanel() {
-  const [editions, setEditions] = useState<Edition[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Edition | null>(null);
-  const [creating, setCreating] = useState(false);
-
-  const load = () => {
-    setLoading(true);
-    fetchEditions().then((d) => { setEditions(d); setLoading(false); }).catch((e) => toast.error(e.message));
-  };
-  useEffect(load, []);
-
-  const onDelete = async (id: string) => {
-    if (!confirm("Excluir esta edição?")) return;
-    const { error } = await supabase.from("editions").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Edição excluída.");
-    load();
-  };
-
-  return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="font-display text-2xl">Edições</h2>
-          <p className="text-sm text-muted-foreground">A edição com a data mais recente vira automaticamente a home.</p>
-        </div>
-        <button onClick={() => setCreating(true)} className="inline-flex items-center gap-2 rounded-full bg-brand-pink px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-90">
-          <Plus className="size-4" /> Nova edição
-        </button>
-      </div>
-
-      {loading ? (
-        <p className="mt-8 text-muted-foreground">Carregando edições...</p>
-      ) : editions.length === 0 ? (
-        <div className="mt-8 rounded-3xl border border-dashed bg-card p-10 text-center">
-          <p className="text-muted-foreground">Nenhuma edição cadastrada ainda. Clique em "Nova edição" para começar.</p>
-        </div>
-      ) : (
-        <div className="mt-6 space-y-4">
-          {editions.map((e, i) => (
-            <div key={e.id} className="rounded-2xl border bg-card p-5">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    {i === 0 && <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-xs font-bold text-foreground">EDIÇÃO ATUAL</span>}
-                    <h3 className="font-display text-xl">{e.titulo}</h3>
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1"><CalendarDays className="size-4" />{new Date(e.data + "T00:00:00").toLocaleDateString("pt-BR")}</span>
-                    <span className="flex items-center gap-1"><MapPin className="size-4" />{e.local}</span>
-                    <span className="flex items-center gap-1"><Users className="size-4" />{e.participantes}</span>
-                  </div>
-                  <p className="mt-2 line-clamp-2 text-sm text-foreground/80">{e.descricao}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => setEditing(e)} className="rounded-full border p-2 hover:bg-accent/40"><Pencil className="size-4" /></button>
-                  <button onClick={() => onDelete(e.id)} className="rounded-full border border-destructive/30 p-2 text-destructive hover:bg-destructive/10"><Trash2 className="size-4" /></button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {(creating || editing) && (
-        <EditionForm
-          initial={editing ?? { ...emptyEdition, id: "", created_at: "", updated_at: "" }}
-          isNew={creating}
-          onClose={() => { setCreating(false); setEditing(null); }}
-          onSaved={() => { setCreating(false); setEditing(null); load(); }}
-        />
-      )}
-    </div>
-  );
-}
-
-function EditionForm({ initial, isNew, onClose, onSaved }: { initial: Edition; isNew: boolean; onClose: () => void; onSaved: () => void }) {
-  const [form, setForm] = useState(initial);
-  const [saving, setSaving] = useState(false);
-
-  const update = <K extends keyof Edition>(k: K, v: Edition[K]) => setForm((f) => ({ ...f, [k]: v }));
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    const payload = {
-      titulo: form.titulo,
-      data: form.data,
-      local: form.local,
-      participantes: form.participantes,
-      descricao: form.descricao,
-      inscricao_url: form.inscricao_url || null,
-      imagem_url: form.imagem_url || null,
-    };
-    const q = isNew
-      ? supabase.from("editions").insert(payload)
-      : supabase.from("editions").update(payload).eq("id", form.id);
-    const { error } = await q;
-    setSaving(false);
-    if (error) return toast.error(error.message);
-    toast.success(isNew ? "Edição criada!" : "Edição atualizada!");
-    onSaved();
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <form onClick={(e) => e.stopPropagation()} onSubmit={submit} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-card p-8 shadow-2xl">
-        <h3 className="font-display text-2xl text-brand-pink">{isNew ? "Nova edição" : "Editar edição"}</h3>
-        <div className="mt-6 grid gap-4">
-          <FField label="Título"><input required value={form.titulo} onChange={(e) => update("titulo", e.target.value)} className={inputCls} /></FField>
-          <div className="grid gap-4 md:grid-cols-2">
-            <FField label="Data"><input required type="date" value={form.data} onChange={(e) => update("data", e.target.value)} className={inputCls} /></FField>
-            <FField label="Nº de participantes"><input required type="number" min={0} value={form.participantes} onChange={(e) => update("participantes", parseInt(e.target.value) || 0)} className={inputCls} /></FField>
-          </div>
-          <FField label="Local"><input required value={form.local} onChange={(e) => update("local", e.target.value)} className={inputCls} /></FField>
-          <FField label="Descritivo"><textarea required rows={5} value={form.descricao} onChange={(e) => update("descricao", e.target.value)} className={inputCls} /></FField>
-          <FField label="URL do botão de inscrição"><input type="url" placeholder="https://..." value={form.inscricao_url ?? ""} onChange={(e) => update("inscricao_url", e.target.value)} className={inputCls} /></FField>
-          <FField label="URL da imagem de capa (opcional)"><input type="url" placeholder="https://..." value={form.imagem_url ?? ""} onChange={(e) => update("imagem_url", e.target.value)} className={inputCls} /></FField>
-        </div>
-        <div className="mt-6 flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="rounded-full border px-5 py-2.5 text-sm font-semibold">Cancelar</button>
-          <button disabled={saving} className="rounded-full bg-brand-pink px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60">
-            {saving ? "Salvando..." : "Salvar"}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-}
 
 /* --- Profile --- */
 

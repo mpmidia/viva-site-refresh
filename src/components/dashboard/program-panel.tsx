@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchAllAttractions, fetchNextEdition, type Attraction } from "@/lib/site-content";
+import { fetchAllAttractions, fetchNextEdition, type AttractionView } from "@/lib/site-content";
+import { SITE_BUCKET, removeFile } from "@/lib/storage";
+import { ImageManager } from "./image-manager";
 import { FField, ghostBtn, inputCls, primaryBtn } from "./ui";
 
-const empty = { id: "", nome: "", descricao: "", data: "", local: "", horario: "", publicado: false };
+type Draft = { id: string; nome: string; descricao: string; data: string; local: string; horario: string; imagem_url: string | null; publicado: boolean };
+
+const empty: Draft = { id: "", nome: "", descricao: "", data: "", local: "", horario: "", imagem_url: null, publicado: false };
 
 export function ProgramPanel() {
-  const [items, setItems] = useState<Attraction[]>([]);
+  const queryClient = useQueryClient();
+  const [items, setItems] = useState<AttractionView[]>([]);
   const [locais, setLocais] = useState<string[]>([]);
-  const [editing, setEditing] = useState<typeof empty | null>(null);
+  const [editing, setEditing] = useState<Draft | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
@@ -19,6 +25,7 @@ export function ProgramPanel() {
       const [list, next] = await Promise.all([fetchAllAttractions(), fetchNextEdition()]);
       setItems(list);
       setLocais(next?.locais ?? []);
+      await queryClient.invalidateQueries({ queryKey: ["attractions"] });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro ao carregar atrações.");
     } finally {
@@ -36,6 +43,7 @@ export function ProgramPanel() {
       data: editing.data || null,
       local: editing.local || null,
       horario: editing.horario || null,
+      imagem_url: editing.imagem_url,
       publicado: editing.publicado,
     };
     const { error } = editing.id
@@ -47,16 +55,17 @@ export function ProgramPanel() {
     await load();
   };
 
-  const togglePublish = async (item: Attraction) => {
+  const togglePublish = async (item: AttractionView) => {
     const { error } = await supabase.from("program_attractions").update({ publicado: !item.publicado }).eq("id", item.id);
     if (error) return toast.error(error.message);
     await load();
   };
 
-  const remove = async (item: Attraction) => {
+  const remove = async (item: AttractionView) => {
     if (!confirm("Remover esta atração da programação?")) return;
     const { error } = await supabase.from("program_attractions").delete().eq("id", item.id);
     if (error) return toast.error(error.message);
+    if (item.imagem_url) await removeFile(SITE_BUCKET, item.imagem_url);
     toast.success("Atração removida.");
     await load();
   };
@@ -79,6 +88,7 @@ export function ProgramPanel() {
         <div className="mt-6 space-y-3">
           {items.map((item) => (
             <div key={item.id} className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border bg-card p-5">
+              {item.imagemUrl && <img src={item.imagemUrl} alt={item.nome} className="size-20 shrink-0 rounded-xl object-cover" />}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-display text-lg">{item.nome}</h3>
@@ -89,7 +99,7 @@ export function ProgramPanel() {
               </div>
               <div className="flex gap-2">
                 <button onClick={() => void togglePublish(item)} className={ghostBtn} title={item.publicado ? "Despublicar" : "Publicar"}>{item.publicado ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button>
-                <button onClick={() => setEditing({ ...item, descricao: item.descricao ?? "", data: item.data ?? "", local: item.local ?? "", horario: item.horario ?? "" })} className={ghostBtn}><Pencil className="size-4" /></button>
+                <button onClick={() => setEditing({ id: item.id, nome: item.nome, descricao: item.descricao ?? "", data: item.data ?? "", local: item.local ?? "", horario: item.horario ?? "", imagem_url: item.imagem_url, publicado: item.publicado })} className={ghostBtn}><Pencil className="size-4" /></button>
                 <button onClick={() => void remove(item)} className="rounded-full border border-destructive/30 px-4 py-2 text-destructive hover:bg-destructive/10"><Trash2 className="size-4" /></button>
               </div>
             </div>
@@ -108,12 +118,22 @@ export function ProgramPanel() {
                 <FField label="Data"><input type="date" value={editing.data} onChange={(e) => setEditing({ ...editing, data: e.target.value })} className={inputCls} /></FField>
                 <FField label="Horário"><input type="time" value={editing.horario} onChange={(e) => setEditing({ ...editing, horario: e.target.value })} className={inputCls} /></FField>
               </div>
-              <FField label="Local" hint="Locais cadastrados na Fase 1 — O Anúncio.">
+              <FField label="Local" hint="Locais cadastrados na aba Próxima Edição.">
                 <select value={editing.local} onChange={(e) => setEditing({ ...editing, local: e.target.value })} className={inputCls}>
                   <option value="">Selecione</option>
                   {locais.map((l) => <option key={l} value={l}>{l}</option>)}
                 </select>
               </FField>
+              <div>
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Imagem da atração</span>
+                <ImageManager
+                  folder="atracoes"
+                  multiple={false}
+                  paths={editing.imagem_url ? [editing.imagem_url] : []}
+                  cover={editing.imagem_url}
+                  onChange={(paths) => setEditing((d) => (d ? { ...d, imagem_url: paths[0] ?? null } : d))}
+                />
+              </div>
               <label className="flex items-center gap-2 text-sm font-semibold">
                 <input type="checkbox" checked={editing.publicado} onChange={(e) => setEditing({ ...editing, publicado: e.target.checked })} /> Publicar na página da programação
               </label>

@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { siteImagesQuery, slotFallback } from "@/lib/site-content";
+import { siteImagesQuery } from "@/lib/site-content";
 
-/** Devolve uma função que resolve a imagem cadastrada pela equipe, com fallback do layout. */
+/**
+ * Devolve a imagem cadastrada pela equipe para cada espaço do site.
+ * Se não houver imagem cadastrada, devolve null — a área simplesmente não exibe imagem.
+ */
 export function useSiteImage() {
   const { data } = useQuery(siteImagesQuery());
-  return (key: string) => data?.[key] ?? slotFallback(key);
+  return (key: string): string | null => data?.[key] ?? null;
 }

@@ -6,7 +6,7 @@ import { CheckCircle2, MessageCircle, Upload, X } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteImage } from "@/hooks/useSiteImage";
-import { CATEGORIES, WHATSAPP_GROUP, citiesQuery, nextEditionQuery } from "@/lib/site-content";
+import { WHATSAPP_GROUP, categoriesQuery, citiesQuery, formatMoney, nextEditionQuery, paymentMethodsQuery } from "@/lib/site-content";
 import { FORM_BUCKET, uploadFile } from "@/lib/storage";
 import { isValidCPF, isValidEmail, isValidPhone, isValidUrl, maskCPF, maskPhone } from "@/lib/validators";
 
@@ -53,7 +53,10 @@ const initialForm: Form = {
 
 function RegistrationPage() {
   const image = useSiteImage();
+  const hero = image("inscricao-hero");
   const { data: cities = [] } = useQuery(citiesQuery());
+  const { data: categories = [] } = useQuery(categoriesQuery());
+  const { data: payments = [] } = useQuery(paymentMethodsQuery(true));
   const { data: next } = useQuery(nextEditionQuery());
   const hasWorkshop = next?.possui_oficinas ?? false;
 
@@ -64,7 +67,8 @@ function RegistrationPage() {
   const [sent, setSent] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => ({ ...f, [k]: v }));
-  const needsDuration = form.categoria === "A" || form.categoria === "B";
+  // Categorias de artesanato e linguagens similares não pedem duração.
+  const needsDuration = Boolean(form.categoria) && !/^c[.\s]/i.test(form.categoria.trim());
 
   const errors = useMemo(() => {
     const e: Record<string, string> = {};
@@ -166,7 +170,7 @@ function RegistrationPage() {
   return (
     <SiteShell>
       <section className="relative overflow-hidden bg-brand-purple text-primary-foreground">
-        <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={image("inscricao-hero")} alt="Artista em apresentação no Festival Aviva Cultura" className="size-full object-cover" /></div>
+        {hero && <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={hero} alt="Artista em apresentação no Festival Aviva Cultura" className="size-full object-cover" /></div>}
         <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/80 md:to-brand-purple/10" />
         <div className="relative mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-20">
           <p className="text-sm font-bold uppercase text-brand-yellow">Inscrições</p>
@@ -213,14 +217,20 @@ function RegistrationPage() {
         <Block title="Bloco 2 — A proposta">
           <Field label="8. Categoria" error={errors.categoria}>
             <div className="space-y-2">
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <label key={c.id} className="flex cursor-pointer items-start gap-3 border border-border p-3 text-sm">
-                  <input type="radio" name="categoria" checked={form.categoria === c.id} onChange={() => set("categoria", c.id)} className="mt-1" />
-                  <span>{c.label}</span>
+                  <input type="radio" name="categoria" checked={form.categoria === c.nome} onChange={() => set("categoria", c.nome)} className="mt-1" />
+                  <span>{c.nome}{formatMoney(c.valor) ? ` — ${formatMoney(c.valor)}` : ""}</span>
                 </label>
               ))}
+              {categories.length === 0 && <p className="text-sm text-muted-foreground">As categorias desta edição ainda não foram publicadas.</p>}
             </div>
           </Field>
+          {payments.length > 0 && (
+            <Field label="Formas de pagamento desta edição">
+              <p className="text-sm text-foreground/80">{payments.map((p) => p.nome).join(" · ")}</p>
+            </Field>
+          )}
           <Field label="9. Título do trabalho" error={errors.titulo_trabalho}>
             <input maxLength={100} value={form.titulo_trabalho} onChange={(e) => set("titulo_trabalho", e.target.value)} className={inputCls} />
           </Field>
@@ -244,7 +254,7 @@ function RegistrationPage() {
               </div>
             )}
           </Field>
-          <Field label="12. Link de vídeo" help="deixe o link público ou não listado até 30 de outubro." error={errors.video_url}>
+          <Field label="12. Link de vídeo (opcional)" help="se enviou as fotos, pode deixar em branco. Deixe o link público ou não listado." error={errors.video_url}>
             <input type="url" placeholder="https://..." value={form.video_url} onChange={(e) => set("video_url", e.target.value)} className={inputCls} />
           </Field>
           <Field label="13. Site ou redes sociais (opcional)">
