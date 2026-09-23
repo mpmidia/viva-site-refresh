@@ -118,6 +118,7 @@ export type Database = {
           ativo: boolean
           created_at: string
           id: string
+          next_edition_id: string
           nome: string
           ordem: number
           updated_at: string
@@ -126,6 +127,7 @@ export type Database = {
           ativo?: boolean
           created_at?: string
           id?: string
+          next_edition_id: string
           nome: string
           ordem?: number
           updated_at?: string
@@ -134,11 +136,20 @@ export type Database = {
           ativo?: boolean
           created_at?: string
           id?: string
+          next_edition_id?: string
           nome?: string
           ordem?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "payment_methods_next_edition_id_fkey"
+            columns: ["next_edition_id"]
+            isOneToOne: false
+            referencedRelation: "next_edition"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -176,6 +187,7 @@ export type Database = {
           id: string
           imagem_url: string | null
           local: string | null
+          next_edition_id: string
           nome: string
           publicado: boolean
           updated_at: string
@@ -188,6 +200,7 @@ export type Database = {
           id?: string
           imagem_url?: string | null
           local?: string | null
+          next_edition_id: string
           nome: string
           publicado?: boolean
           updated_at?: string
@@ -200,16 +213,26 @@ export type Database = {
           id?: string
           imagem_url?: string | null
           local?: string | null
+          next_edition_id?: string
           nome?: string
           publicado?: boolean
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "program_attractions_next_edition_id_fkey"
+            columns: ["next_edition_id"]
+            isOneToOne: false
+            referencedRelation: "next_edition"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       registration_categories: {
         Row: {
           created_at: string
           id: string
+          next_edition_id: string
           nome: string
           ordem: number
           updated_at: string
@@ -218,6 +241,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          next_edition_id: string
           nome: string
           ordem?: number
           updated_at?: string
@@ -226,17 +250,27 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          next_edition_id?: string
           nome?: string
           ordem?: number
           updated_at?: string
           valor?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "registration_categories_next_edition_id_fkey"
+            columns: ["next_edition_id"]
+            isOneToOne: false
+            referencedRelation: "next_edition"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       registration_cities: {
         Row: {
           created_at: string
           id: string
+          next_edition_id: string
           nome: string
           ordem: number
           updated_at: string
@@ -244,6 +278,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          next_edition_id: string
           nome: string
           ordem?: number
           updated_at?: string
@@ -251,11 +286,20 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          next_edition_id?: string
           nome?: string
           ordem?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "registration_cities_next_edition_id_fkey"
+            columns: ["next_edition_id"]
+            isOneToOne: false
+            referencedRelation: "next_edition"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       registrations: {
         Row: {
@@ -271,6 +315,7 @@ export type Database = {
           forma_cache: string
           fotos: string[]
           id: string
+          next_edition_id: string
           nome_artistico: string
           oficina_descricao: string | null
           oficina_faixas: string[]
@@ -297,6 +342,7 @@ export type Database = {
           forma_cache: string
           fotos?: string[]
           id?: string
+          next_edition_id: string
           nome_artistico: string
           oficina_descricao?: string | null
           oficina_faixas?: string[]
@@ -323,6 +369,7 @@ export type Database = {
           forma_cache?: string
           fotos?: string[]
           id?: string
+          next_edition_id?: string
           nome_artistico?: string
           oficina_descricao?: string | null
           oficina_faixas?: string[]
@@ -336,7 +383,15 @@ export type Database = {
           video_url?: string | null
           whatsapp?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "registrations_next_edition_id_fkey"
+            columns: ["next_edition_id"]
+            isOneToOne: false
+            referencedRelation: "next_edition"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_images: {
         Row: {
