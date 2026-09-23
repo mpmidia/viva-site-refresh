@@ -36,6 +36,7 @@ function NextPage() {
 
   const covers = next?.capasUrls ?? [];
   const heroFallback = image("proxima-hero");
+  const hasCover = covers.length > 0 || Boolean(heroFallback);
   const announced = hasAnnouncement(next);
   const status = registrationStatus(next);
   const periodo = formatPeriod(next?.data_evento, next?.data_fim);
@@ -45,15 +46,17 @@ function NextPage() {
     <SiteShell>
       {/* Capa */}
       <section className="relative overflow-hidden bg-brand-purple text-primary-foreground">
-        <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto">
-          {covers.length > 0 ? (
-            <CoverSlideshow images={covers} alt="Imagem da próxima edição do Festival Aviva Cultura" className="absolute inset-0 size-full" />
-          ) : heroFallback ? (
-            <img src={heroFallback} alt="Apresentação do Festival Aviva Cultura" className="size-full object-cover" />
-          ) : null}
-        </div>
-        <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/80 md:to-brand-purple/10" />
-        <div className="relative mx-auto flex max-w-7xl items-end px-5 py-14 md:min-h-[78svh] md:px-8 md:py-24">
+        {hasCover && (
+          <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto">
+            {covers.length > 0 ? (
+              <CoverSlideshow images={covers} alt="Imagem da próxima edição do Festival Aviva Cultura" className="absolute inset-0 size-full" />
+            ) : (
+              <img src={heroFallback!} alt="Apresentação do Festival Aviva Cultura" className="size-full object-cover" />
+            )}
+          </div>
+        )}
+        {hasCover && <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/80 md:to-brand-purple/10" />}
+        <div className={`relative mx-auto flex max-w-7xl items-end px-5 py-14 md:px-8 md:py-24 ${hasCover ? "md:min-h-[78svh]" : ""}`}>
           <div className="max-w-4xl">
             <p className="text-sm font-bold uppercase tracking-widest text-brand-yellow">Próxima edição</p>
             {announced ? (

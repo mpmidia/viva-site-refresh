@@ -102,7 +102,7 @@ function RegistrationPage() {
 
   const valid = Object.keys(errors).length === 0;
 
-  const addPhotos = (files: FileList | null) => {
+  const addPhotos = (files: File[]) => {
     if (!files) return;
     const list = Array.from(files);
     const invalid = list.find((f) => !ACCEPTED.includes(f.type) && !/\.heic$/i.test(f.name));
@@ -241,7 +241,7 @@ function RegistrationPage() {
           <Field label="11. Fotos do trabalho (3 a 5 arquivos, JPG/PNG/HEIC, até 10 MB cada)" help="podem ser fotos de celular." error={errors.midia}>
             <label className="inline-flex cursor-pointer items-center gap-2 border border-dashed border-border px-4 py-3 text-sm font-semibold">
               <Upload className="size-4" /> Escolher fotos
-              <input type="file" multiple accept=".jpg,.jpeg,.png,.heic,image/*" className="hidden" onChange={(e) => { addPhotos(e.target.files); e.target.value = ""; }} />
+              <input type="file" multiple accept=".jpg,.jpeg,.png,.heic,image/*" className="hidden" onChange={(e) => { addPhotos(Array.from(e.target.files ?? [])); e.target.value = ""; }} />
             </label>
             {photos.length > 0 && (
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
