@@ -23,3 +23,4 @@
 - [x] Usar a identidade visual da edição em Próxima Edição e Programação
 - [x] Revisar clareza e atratividade das páginas Próxima Edição e Programação
 - [x] Validar persistência e exibição em desktop, tablet e celular
+- [x] Reorganizar a página da edição com texto aberto e galeria automática de três imagens
