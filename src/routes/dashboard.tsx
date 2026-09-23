@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CalendarDays, MapPin, Users, Pencil, Trash2, Plus, LogOut, User as UserIcon, ArrowLeft } from "lucide-react";
+import { LogOut, User as UserIcon, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchEditions, type Edition } from "@/lib/editions";
+import { EditionsPanel } from "@/components/dashboard/editions-panel";
 import { NextEditionPanel } from "@/components/dashboard/next-edition-panel";
 import { ProgramPanel } from "@/components/dashboard/program-panel";
 import { RegistrationsPanel } from "@/components/dashboard/registrations-panel";
