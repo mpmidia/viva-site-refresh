@@ -195,7 +195,7 @@ export function NextEditionPanel() {
       <Card title="Imagens de capa" description="Aparecem em revezamento automático na capa da página Próxima Edição.">
         <label className={ghostBtn + " inline-flex cursor-pointer items-center gap-2"}>
           <Upload className="size-4" /> Adicionar imagens
-          <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { const f = e.target.files; e.target.value = ""; void addCapas(f); }} />
+          <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { const f = Array.from(e.target.files ?? []); e.target.value = ""; void addCapas(f); }} />
         </label>
         {row.capas.length > 0 && (
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
