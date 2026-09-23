@@ -6,7 +6,7 @@ import { CheckCircle2, MessageCircle, Upload, X } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteImage } from "@/hooks/useSiteImage";
-import { CATEGORIES, WHATSAPP_GROUP, citiesQuery, nextEditionQuery } from "@/lib/site-content";
+import { WHATSAPP_GROUP, categoriesQuery, citiesQuery, formatMoney, nextEditionQuery, paymentMethodsQuery } from "@/lib/site-content";
 import { FORM_BUCKET, uploadFile } from "@/lib/storage";
 import { isValidCPF, isValidEmail, isValidPhone, isValidUrl, maskCPF, maskPhone } from "@/lib/validators";
 
@@ -53,7 +53,10 @@ const initialForm: Form = {
 
 function RegistrationPage() {
   const image = useSiteImage();
+  const hero = image("inscricao-hero");
   const { data: cities = [] } = useQuery(citiesQuery());
+  const { data: categories = [] } = useQuery(categoriesQuery());
+  const { data: payments = [] } = useQuery(paymentMethodsQuery(true));
   const { data: next } = useQuery(nextEditionQuery());
   const hasWorkshop = next?.possui_oficinas ?? false;
 
