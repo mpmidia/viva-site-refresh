@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowLeft, CalendarDays, MapPin, Play, Users } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { VideoEmbed } from "@/components/media-embed";
+import { EditionGalleryCarousel } from "@/components/edition-gallery-carousel";
 import { editionByIdQuery } from "@/lib/editions";
 import { getEditionMedia } from "@/lib/edition-media";
 import { toEmbedUrl } from "@/lib/validators";
@@ -70,38 +71,32 @@ function EditionDetailPage() {
         </div>
       </section>
 
-      {/* Texto + ficha */}
-      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-        <div className="grid gap-12 md:grid-cols-[1.6fr_.7fr] md:items-start">
-          <article className="border-l-4 border-brand-pink pl-6 md:pl-10">
-            <p className="text-sm font-bold uppercase text-brand-teal">Sobre esta edição</p>
-            <p className="mt-5 whitespace-pre-line text-lg leading-relaxed text-foreground/80">{e.descricao}</p>
-          </article>
-
-          <aside className="space-y-4 bg-brand-yellow p-8 md:sticky md:top-28">
-            <p className="text-xs font-bold uppercase text-foreground">Ficha da edição</p>
-            <InfoRow label="Data" value={dateStr} />
-            <InfoRow label="Local" value={e.local} />
-            {e.participantes > 0 && <InfoRow label="Participantes" value={String(e.participantes)} />}
+      {/* Texto aberto */}
+      <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-28">
+        <article className="mx-auto max-w-5xl">
+          <div className="grid gap-5 border-b border-border pb-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:pb-10">
+            <div className="min-w-0">
+              <p className="text-sm font-bold uppercase text-brand-teal">Sobre esta edição</p>
+              <h2 className="mt-3 max-w-3xl font-display text-3xl uppercase leading-tight sm:text-4xl md:text-6xl">Arte que ocupa a cidade</h2>
+            </div>
             {e.inscricao_url && (
-              <a href={e.inscricao_url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex w-full items-center justify-center bg-brand-pink px-5 py-4 text-sm font-bold uppercase text-primary-foreground hover:opacity-90">
+              <a href={e.inscricao_url} target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center justify-center bg-brand-pink px-6 py-4 text-sm font-bold uppercase text-primary-foreground transition hover:opacity-90">
                 Faça sua inscrição
               </a>
             )}
-          </aside>
-        </div>
+          </div>
+          <p className="mt-8 whitespace-pre-line text-xl leading-relaxed text-foreground/80 md:mt-12 md:text-2xl md:leading-relaxed">{e.descricao}</p>
+        </article>
       </section>
 
       {rest.length > 0 && (
-        <section className="bg-brand-cream py-16 md:py-24">
-          <div className="mx-auto max-w-7xl px-5 md:px-8">
-            <p className="text-sm font-bold uppercase text-brand-pink">Registros da edição</p>
-            <h2 className="mt-3 font-display text-3xl uppercase sm:text-4xl md:text-6xl">Momentos do festival</h2>
-            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {rest.map((image, index) => (
-                <img key={image} src={image} alt={`Momento ${index + 1} da edição ${e.titulo}`} className="aspect-[4/3] size-full object-cover" />
-              ))}
+        <section className="overflow-hidden bg-brand-cream py-16 md:py-24">
+          <div className="mx-auto max-w-[100rem] px-5 md:px-8">
+            <div className="mx-auto max-w-7xl">
+              <p className="text-sm font-bold uppercase text-brand-pink">Registros da edição</p>
+              <h2 className="mt-3 max-w-4xl font-display text-3xl uppercase leading-tight sm:text-4xl md:text-6xl">Momentos do festival</h2>
             </div>
+            <EditionGalleryCarousel images={rest} title={e.titulo} />
           </div>
         </section>
       )}
@@ -115,15 +110,6 @@ function EditionDetailPage() {
         </section>
       )}
     </SiteShell>
-  );
-}
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-start justify-between gap-4 border-b border-foreground/15 pb-3 last:border-0 last:pb-0">
-      <span className="text-sm text-foreground/70">{label}</span>
-      <span className="text-right text-sm font-bold text-foreground">{value}</span>
-    </div>
   );
 }
 
