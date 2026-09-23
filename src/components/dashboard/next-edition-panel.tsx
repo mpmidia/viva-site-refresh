@@ -81,11 +81,11 @@ export function NextEditionPanel() {
     if (ok) { toast.success("Próxima edição atualizada."); dirty.current = false; await load(true); }
   };
 
-  const addCapas = async (files: FileList | null) => {
-    if (!files?.length || !row) return;
+  const addCapas = async (files: File[]) => {
+    if (!files.length || !row) return;
     try {
       const paths = [...row.capas];
-      for (const file of Array.from(files)) paths.push(await uploadFile(SITE_BUCKET, "capas", file));
+      for (const file of files) paths.push(await uploadFile(SITE_BUCKET, "capas", file));
       if (await persist({ capas: paths })) { toast.success("Imagens adicionadas."); await load(false); }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Falha no upload.");
