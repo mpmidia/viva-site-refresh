@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
-import type { Edition } from "@/lib/editions";
+import type { EditionView } from "@/lib/editions";
 import { getEditionMedia } from "@/lib/edition-media";
 
-export function EditionCard({ edition, showFullText = false }: { edition: Edition; showFullText?: boolean }) {
+export function EditionCard({ edition, showFullText = false }: { edition: EditionView; showFullText?: boolean }) {
   const date = new Date(edition.data + "T00:00:00");
-  const image = getEditionMedia(edition.titulo)?.cover ?? edition.imagem_url;
+  // Imagens cadastradas pela equipe têm prioridade; o acervo histórico entra só quando não há nenhuma.
+  const image = edition.coverUrl ?? getEditionMedia(edition.titulo)?.cover ?? null;
   return (
     <article className="group overflow-hidden border-b border-border bg-card">
       <Link to="/edicoes/$id" params={{ id: edition.id }} className="block overflow-hidden">
