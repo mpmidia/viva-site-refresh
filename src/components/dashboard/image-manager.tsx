@@ -30,11 +30,11 @@ export function ImageManager({
     return () => { active = false; };
   }, [paths.join("|")]);
 
-  const add = async (files: FileList | null) => {
-    if (!files?.length) return;
+  const add = async (files: File[]) => {
+    if (!files.length) return;
     setBusy(true);
     try {
-      const list = multiple ? Array.from(files) : [files[0]];
+      const list = multiple ? files : [files[0]];
       const added: string[] = [];
       for (const file of list) added.push(await uploadFile(SITE_BUCKET, folder, file));
       if (multiple) {
