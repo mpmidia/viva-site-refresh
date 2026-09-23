@@ -36,6 +36,7 @@ function NextPage() {
 
   const covers = next?.capasUrls ?? [];
   const heroFallback = image("proxima-hero");
+  const hasCover = covers.length > 0 || Boolean(heroFallback);
   const announced = hasAnnouncement(next);
   const status = registrationStatus(next);
   const periodo = formatPeriod(next?.data_evento, next?.data_fim);
