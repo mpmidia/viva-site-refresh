@@ -4,7 +4,7 @@ import { Clock, MapPin } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { LogosBar } from "@/components/logos-bar";
 import { useSiteImage } from "@/hooks/useSiteImage";
-import { attractionsQuery, formatDate, nextEditionQuery, type Attraction } from "@/lib/site-content";
+import { attractionsQuery, formatDate, nextEditionQuery, type AttractionView } from "@/lib/site-content";
 
 export const Route = createFileRoute("/programacao")({
   head: () => ({ meta: [
@@ -20,10 +20,11 @@ export const Route = createFileRoute("/programacao")({
 
 function ProgramPage() {
   const image = useSiteImage();
+  const hero = image("programacao-hero");
   const { data: attractions = [], isLoading } = useQuery(attractionsQuery());
   const { data: next } = useQuery(nextEditionQuery());
 
-  const byDay = attractions.reduce<Record<string, Attraction[]>>((acc, item) => {
+  const byDay = attractions.reduce<Record<string, AttractionView[]>>((acc, item) => {
     const key = item.data ?? "sem-data";
     (acc[key] ??= []).push(item);
     return acc;
@@ -33,7 +34,7 @@ function ProgramPage() {
   return (
     <SiteShell>
       <section className="relative overflow-hidden bg-brand-purple text-primary-foreground md:min-h-[52svh]">
-        <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={image("programacao-hero")} alt="Apresentação do Festival Aviva Cultura" className="size-full object-cover" /></div>
+        {hero && <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={hero} alt="Apresentação do Festival Aviva Cultura" className="size-full object-cover" /></div>}
         <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/75 md:to-brand-purple/10" />
         <div className="relative mx-auto flex max-w-7xl items-center px-5 py-12 md:min-h-[52svh] md:px-8 md:py-20">
           <div>
@@ -59,8 +60,9 @@ function ProgramPage() {
                   <h2 className="font-display text-2xl uppercase text-brand-pink md:text-3xl">{day === "sem-data" ? "Datas a confirmar" : formatDate(day)}</h2>
                   <div className="mt-6 divide-y divide-border border-t border-border">
                     {byDay[day].map((item) => (
-                      <article key={item.id} className="flex flex-col gap-2 py-6 md:flex-row md:gap-8">
-                        {item.horario && <p className="shrink-0 font-display text-xl text-brand-teal md:w-28">{item.horario.slice(0, 5)}</p>}
+                      <article key={item.id} className="flex flex-col gap-4 py-6 md:flex-row md:gap-8">
+                        {item.horario && <p className="shrink-0 font-display text-xl text-brand-teal md:w-24">{item.horario.slice(0, 5)}</p>}
+                        {item.imagemUrl && <img src={item.imagemUrl} alt={item.nome} className="aspect-[4/3] w-full shrink-0 object-cover md:size-40" />}
                         <div>
                           <h3 className="font-display text-xl uppercase md:text-2xl">{item.nome}</h3>
                           {item.local && <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground"><MapPin className="size-4" /> {item.local}</p>}
