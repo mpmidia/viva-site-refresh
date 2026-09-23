@@ -210,7 +210,7 @@ export async function fetchCities(editionId: string): Promise<RegistrationCity[]
 
 export const citiesQuery = (editionId: string) => queryOptions({ queryKey: ["registration-cities", editionId], queryFn: () => fetchCities(editionId), enabled: Boolean(editionId), staleTime: 30_000 });
 
-/* ---------- Categorias e formas de pagamento ---------- */
+/* ---------- Categorias e formas de recebimento do cachê ---------- */
 
 export type RegistrationCategory = { id: string; nome: string; valor: number | null; ordem: number; next_edition_id: string };
 

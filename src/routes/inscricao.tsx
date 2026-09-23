@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CheckCircle2, MessageCircle, Upload, X } from "lucide-react";
@@ -70,6 +70,10 @@ function RegistrationPage() {
   const [checks, setChecks] = useState<boolean[]>(Array(7).fill(false));
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    if (!editionId && search.edicao && openEditions.some((edition) => edition.id === search.edicao)) setEditionId(search.edicao);
+  }, [editionId, openEditions, search.edicao]);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => ({ ...f, [k]: v }));
   // Categorias de artesanato e linguagens similares não pedem duração.
