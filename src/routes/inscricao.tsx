@@ -6,11 +6,12 @@ import { CheckCircle2, MessageCircle, Upload, X } from "lucide-react";
 import { SiteShell } from "@/components/site-shell";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteImage } from "@/hooks/useSiteImage";
-import { WHATSAPP_GROUP, categoriesQuery, citiesQuery, formatMoney, nextEditionQuery, paymentMethodsQuery } from "@/lib/site-content";
+import { WHATSAPP_GROUP, categoriesQuery, citiesQuery, formatMoney, nextEditionsQuery, paymentMethodsQuery, registrationStatus } from "@/lib/site-content";
 import { FORM_BUCKET, uploadFile } from "@/lib/storage";
 import { isValidCPF, isValidEmail, isValidPhone, isValidUrl, maskCPF, maskPhone } from "@/lib/validators";
 
 export const Route = createFileRoute("/inscricao")({
+  validateSearch: (search: Record<string, unknown>) => ({ edicao: typeof search.edicao === "string" ? search.edicao : undefined }),
   head: () => ({ meta: [
     { title: "Inscrição — Festival Aviva Cultura" },
     { name: "description", content: "Inscreva seu trabalho artístico na próxima edição do Festival Aviva Cultura." },
@@ -22,13 +23,12 @@ export const Route = createFileRoute("/inscricao")({
   component: RegistrationPage,
 });
 
-const PAYMENT_OPTIONS = ["pessoa física", "MEI", "pessoa jurídica", "coletivo sem CNPJ, com representante"];
 const RATINGS = ["Livre", "10 anos", "12 anos", "14 anos", "16 anos", "18 anos"];
 const AGE_GROUPS = ["anos iniciais, 6 a 10 anos", "anos finais, 11 a 14 anos", "ensino médio", "qualquer idade"];
 const DECLARATIONS = [
   "Declaro que todas as informações que prestei neste formulário são verdadeiras.",
   "Declaro que sou autor ou autora do trabalho inscrito, ou que tenho autorização para apresentá-lo, e que respondo por qualquer uso de obra de outra pessoa.",
-  "Declaro que moro em Embu das Artes ou em um dos municípios aceitos pelo regulamento, e que comprovo isso se for selecionado.",
+  "Declaro que moro em um dos municípios aceitos pelo regulamento da edição escolhida, e que comprovo isso se for selecionado.",
   "Declaro que não sou dirigente, funcionário ou prestador de serviço da ACRIART, nem integrante da equipe do projeto, da curadoria ou da Comissão de Seleção, e que não sou cônjuge, companheiro ou parente até terceiro grau dessas pessoas.",
   "Declaro que, se for selecionado, entrego os documentos pedidos e assino o contrato nos prazos do regulamento.",
   "Declaro que li e aceito integralmente o Regulamento de Participação.",
@@ -52,12 +52,17 @@ const initialForm: Form = {
 };
 
 function RegistrationPage() {
+  const search = Route.useSearch();
   const image = useSiteImage();
   const hero = image("inscricao-hero");
-  const { data: cities = [] } = useQuery(citiesQuery());
-  const { data: categories = [] } = useQuery(categoriesQuery());
-  const { data: payments = [] } = useQuery(paymentMethodsQuery(true));
-  const { data: next } = useQuery(nextEditionQuery());
+  const { data: allEditions = [] } = useQuery(nextEditionsQuery());
+  const openEditions = allEditions.filter((edition) => registrationStatus(edition) === "abertas");
+  const initialEditionId = openEditions.some((edition) => edition.id === search.edicao) ? search.edicao ?? "" : "";
+  const [editionId, setEditionId] = useState(initialEditionId);
+  const next = openEditions.find((edition) => edition.id === editionId);
+  const { data: cities = [] } = useQuery(citiesQuery(editionId));
+  const { data: categories = [] } = useQuery(categoriesQuery(editionId));
+  const { data: payments = [] } = useQuery(paymentMethodsQuery(editionId, true));
   const hasWorkshop = next?.possui_oficinas ?? false;
 
   const [form, setForm] = useState<Form>(initialForm);
@@ -72,6 +77,7 @@ function RegistrationPage() {
 
   const errors = useMemo(() => {
     const e: Record<string, string> = {};
+    if (!editionId) e.editionId = "Escolha a edição para a qual deseja se inscrever.";
     if (!form.nome_artistico.trim()) e.nome_artistico = "Informe o nome do artista, grupo ou coletivo.";
     if (!form.responsavel.trim()) e.responsavel = "Informe o nome completo do responsável.";
     if (!isValidCPF(form.cpf)) e.cpf = "CPF inválido.";
@@ -98,7 +104,7 @@ function RegistrationPage() {
     }
     if (checks.some((c) => !c)) e.declaracoes = "Marque todas as sete declarações.";
     return e;
-  }, [form, photos, checks, hasWorkshop, needsDuration]);
+  }, [form, photos, checks, hasWorkshop, needsDuration, editionId]);
 
   const valid = Object.keys(errors).length === 0;
 
@@ -118,8 +124,9 @@ function RegistrationPage() {
     setSending(true);
     try {
       const paths: string[] = [];
-      for (const file of photos) paths.push(await uploadFile(FORM_BUCKET, "fotos", file));
+      for (const file of photos) paths.push(await uploadFile(FORM_BUCKET, `edicoes/${editionId}/fotos`, file));
       const { error } = await supabase.from("registrations").insert({
+        next_edition_id: editionId,
         nome_artistico: form.nome_artistico.trim(),
         responsavel: form.responsavel.trim(),
         cpf: form.cpf,
@@ -167,6 +174,10 @@ function RegistrationPage() {
     );
   }
 
+  if (openEditions.length === 0) {
+    return <SiteShell><section className="mx-auto max-w-3xl px-5 py-24 text-center md:px-8"><h1 className="font-display text-5xl uppercase text-brand-pink md:text-7xl">Em breve</h1><p className="mt-5 text-lg text-muted-foreground">No momento não há edições com inscrições abertas.</p></section></SiteShell>;
+  }
+
   return (
     <SiteShell>
       <section className="relative overflow-hidden bg-brand-purple text-primary-foreground">
@@ -179,6 +190,16 @@ function RegistrationPage() {
       </section>
 
       <form onSubmit={submit} className="mx-auto max-w-3xl space-y-10 px-5 py-14 md:px-8 md:py-20" noValidate>
+        <Block title="Escolha a edição">
+          <Field label="Para qual edição deseja enviar seu trabalho?" error={errors.editionId}>
+            <select value={editionId} onChange={(e) => { setEditionId(e.target.value); setForm(initialForm); setPhotos([]); }} className={inputCls}>
+              <option value="">Selecione uma edição</option>
+              {openEditions.map((edition) => <option key={edition.id} value={edition.id}>{edition.cidade || "Edição sem cidade"}</option>)}
+            </select>
+          </Field>
+        </Block>
+
+        {editionId && <>
         {/* Bloco 1 */}
         <Block title="Bloco 1 — Quem está se inscrevendo">
           <Field label="1. Nome do artista, grupo ou coletivo" help="é o nome que vai aparecer na programação." error={errors.nome_artistico}>
@@ -208,7 +229,7 @@ function RegistrationPage() {
           <Field label="7. Se for selecionado, como pretende receber o cachê?" help="dá para mudar depois, é só para a gente se organizar." error={errors.forma_cache}>
             <select value={form.forma_cache} onChange={(e) => set("forma_cache", e.target.value)} className={inputCls}>
               <option value="">Selecione</option>
-              {PAYMENT_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+               {payments.map((o) => <option key={o.id} value={o.nome}>{o.nome}</option>)}
             </select>
           </Field>
         </Block>
@@ -226,11 +247,6 @@ function RegistrationPage() {
               {categories.length === 0 && <p className="text-sm text-muted-foreground">As categorias desta edição ainda não foram publicadas.</p>}
             </div>
           </Field>
-          {payments.length > 0 && (
-            <Field label="Formas de pagamento desta edição">
-              <p className="text-sm text-foreground/80">{payments.map((p) => p.nome).join(" · ")}</p>
-            </Field>
-          )}
           <Field label="9. Título do trabalho" error={errors.titulo_trabalho}>
             <input maxLength={100} value={form.titulo_trabalho} onChange={(e) => set("titulo_trabalho", e.target.value)} className={inputCls} />
           </Field>
@@ -325,6 +341,7 @@ function RegistrationPage() {
           {sending ? "Enviando..." : "Enviar inscrição"}
         </button>
         {!valid && <p className="text-center text-sm text-muted-foreground">Preencha todos os campos obrigatórios e marque as sete declarações para liberar o envio.</p>}
+        </>}
       </form>
     </SiteShell>
   );
