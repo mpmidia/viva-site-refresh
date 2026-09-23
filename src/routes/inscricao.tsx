@@ -67,7 +67,8 @@ function RegistrationPage() {
   const [sent, setSent] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setForm((f) => ({ ...f, [k]: v }));
-  const needsDuration = form.categoria === "A" || form.categoria === "B";
+  // Categorias de artesanato e linguagens similares não pedem duração.
+  const needsDuration = Boolean(form.categoria) && !/^c[.\s]/i.test(form.categoria.trim());
 
   const errors = useMemo(() => {
     const e: Record<string, string> = {};
@@ -169,7 +170,7 @@ function RegistrationPage() {
   return (
     <SiteShell>
       <section className="relative overflow-hidden bg-brand-purple text-primary-foreground">
-        <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={image("inscricao-hero")} alt="Artista em apresentação no Festival Aviva Cultura" className="size-full object-cover" /></div>
+        {hero && <div className="relative aspect-[4/3] md:absolute md:inset-0 md:aspect-auto"><img src={hero} alt="Artista em apresentação no Festival Aviva Cultura" className="size-full object-cover" /></div>}
         <div className="hidden md:absolute md:inset-0 md:block md:bg-gradient-to-r md:from-brand-purple md:via-brand-purple/80 md:to-brand-purple/10" />
         <div className="relative mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-20">
           <p className="text-sm font-bold uppercase text-brand-yellow">Inscrições</p>
