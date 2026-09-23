@@ -17,9 +17,9 @@
 - [x] Formulário de inscrição completo com validações, upload e botão do grupo de WhatsApp
 - [x] Painel de inscrições recebidas e cidades do formulário
 - [x] Validar desktop e celular dos novos fluxos
-- [ ] Permitir cadastrar, editar e excluir múltiplas próximas edições
-- [ ] Vincular programação e inscrições à edição correspondente
-- [ ] Corrigir a nomenclatura das opções de recebimento de cachê
-- [ ] Usar a identidade visual da edição em Próxima Edição e Programação
-- [ ] Revisar clareza e atratividade das páginas Próxima Edição e Programação
-- [ ] Validar persistência e exibição em desktop, tablet e celular
+- [x] Permitir cadastrar, editar e excluir múltiplas próximas edições
+- [x] Vincular programação e inscrições à edição correspondente
+- [x] Corrigir a nomenclatura das opções de recebimento de cachê
+- [x] Usar a identidade visual da edição em Próxima Edição e Programação
+- [x] Revisar clareza e atratividade das páginas Próxima Edição e Programação
+- [x] Validar persistência e exibição em desktop, tablet e celular
