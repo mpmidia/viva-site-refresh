@@ -8,6 +8,7 @@ import { EditionsPanel } from "@/components/dashboard/editions-panel";
 import { NextEditionPanel } from "@/components/dashboard/next-edition-panel";
 import { ProgramPanel } from "@/components/dashboard/program-panel";
 import { RegistrationsPanel } from "@/components/dashboard/registrations-panel";
+import { SponsorshipPanel } from "@/components/dashboard/sponsorship-panel";
 import { ImagesPanel } from "@/components/dashboard/images-panel";
 
 export const Route = createFileRoute("/dashboard")({
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
-type Tab = "editions" | "next" | "program" | "registrations" | "images" | "profile";
+type Tab = "editions" | "next" | "program" | "registrations" | "images" | "sponsor" | "profile";
 
 function DashboardPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -67,6 +68,7 @@ function DashboardPage() {
           <TabButton active={tab === "program"} onClick={() => setTab("program")}>Programação</TabButton>
           <TabButton active={tab === "registrations"} onClick={() => setTab("registrations")}>Inscrições</TabButton>
           <TabButton active={tab === "images"} onClick={() => setTab("images")}>Imagens</TabButton>
+          <TabButton active={tab === "sponsor"} onClick={() => setTab("sponsor")}>Patrocínio</TabButton>
           <TabButton active={tab === "profile"} onClick={() => setTab("profile")}><UserIcon className="mr-1 inline size-4" />Perfil</TabButton>
         </div>
       </header>
@@ -77,6 +79,7 @@ function DashboardPage() {
         {tab === "program" && <ProgramPanel />}
         {tab === "registrations" && <RegistrationsPanel />}
         {tab === "images" && <ImagesPanel />}
+        {tab === "sponsor" && <SponsorshipPanel />}
         {tab === "profile" && <ProfilePanel userId={user.id} email={user.email ?? ""} />}
       </main>
     </div>
