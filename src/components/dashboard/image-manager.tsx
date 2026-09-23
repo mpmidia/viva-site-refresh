@@ -66,7 +66,7 @@ export function ImageManager({
           accept="image/*"
           multiple={multiple}
           className="hidden"
-          onChange={(e) => { const f = e.target.files; e.target.value = ""; void add(f); }}
+          onChange={(e) => { const f = Array.from(e.target.files ?? []); e.target.value = ""; void add(f); }}
         />
       </label>
 
