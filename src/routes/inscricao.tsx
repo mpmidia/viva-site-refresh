@@ -217,14 +217,20 @@ function RegistrationPage() {
         <Block title="Bloco 2 — A proposta">
           <Field label="8. Categoria" error={errors.categoria}>
             <div className="space-y-2">
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <label key={c.id} className="flex cursor-pointer items-start gap-3 border border-border p-3 text-sm">
-                  <input type="radio" name="categoria" checked={form.categoria === c.id} onChange={() => set("categoria", c.id)} className="mt-1" />
-                  <span>{c.label}</span>
+                  <input type="radio" name="categoria" checked={form.categoria === c.nome} onChange={() => set("categoria", c.nome)} className="mt-1" />
+                  <span>{c.nome}{formatMoney(c.valor) ? ` — ${formatMoney(c.valor)}` : ""}</span>
                 </label>
               ))}
+              {categories.length === 0 && <p className="text-sm text-muted-foreground">As categorias desta edição ainda não foram publicadas.</p>}
             </div>
           </Field>
+          {payments.length > 0 && (
+            <Field label="Formas de pagamento desta edição">
+              <p className="text-sm text-foreground/80">{payments.map((p) => p.nome).join(" · ")}</p>
+            </Field>
+          )}
           <Field label="9. Título do trabalho" error={errors.titulo_trabalho}>
             <input maxLength={100} value={form.titulo_trabalho} onChange={(e) => set("titulo_trabalho", e.target.value)} className={inputCls} />
           </Field>
@@ -248,7 +254,7 @@ function RegistrationPage() {
               </div>
             )}
           </Field>
-          <Field label="12. Link de vídeo" help="deixe o link público ou não listado até 30 de outubro." error={errors.video_url}>
+          <Field label="12. Link de vídeo (opcional)" help="se enviou as fotos, pode deixar em branco. Deixe o link público ou não listado." error={errors.video_url}>
             <input type="url" placeholder="https://..." value={form.video_url} onChange={(e) => set("video_url", e.target.value)} className={inputCls} />
           </Field>
           <Field label="13. Site ou redes sociais (opcional)">
