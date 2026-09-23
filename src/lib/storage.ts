@@ -25,15 +25,16 @@ export async function removeFile(bucket: string, path: string) {
 
 export async function signPath(bucket: string, path: string | null | undefined): Promise<string | null> {
   if (!path) return null;
-  if (path.startsWith("http")) return path;
+  if (path.startsWith("http") || path.startsWith("/")) return path;
   const { data } = await supabase.storage.from(bucket).createSignedUrl(path, ONE_YEAR);
   return data?.signedUrl ?? null;
 }
 
 export async function signPaths(bucket: string, paths: string[]): Promise<Record<string, string>> {
   const map: Record<string, string> = {};
-  const remote = paths.filter((p) => p && !p.startsWith("http"));
-  for (const p of paths) if (p?.startsWith("http")) map[p] = p;
+  const isAbsolute = (p: string) => p.startsWith("http") || p.startsWith("/");
+  const remote = paths.filter((p) => p && !isAbsolute(p));
+  for (const p of paths) if (p && isAbsolute(p)) map[p] = p;
   if (remote.length) {
     const { data } = await supabase.storage.from(bucket).createSignedUrls(remote, ONE_YEAR);
     for (const item of data ?? []) if (item.path && item.signedUrl) map[item.path] = item.signedUrl;
