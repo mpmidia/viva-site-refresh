@@ -21,11 +21,13 @@ export type Database = {
           descricao: string
           id: string
           imagem_url: string | null
+          imagens: string[]
           inscricao_url: string | null
           local: string
           participantes: number
           titulo: string
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           created_at?: string
@@ -33,11 +35,13 @@ export type Database = {
           descricao: string
           id?: string
           imagem_url?: string | null
+          imagens?: string[]
           inscricao_url?: string | null
           local: string
           participantes?: number
           titulo: string
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           created_at?: string
@@ -45,11 +49,13 @@ export type Database = {
           descricao?: string
           id?: string
           imagem_url?: string | null
+          imagens?: string[]
           inscricao_url?: string | null
           local?: string
           participantes?: number
           titulo?: string
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -59,8 +65,10 @@ export type Database = {
           cidade: string | null
           created_at: string
           data_evento: string | null
+          data_fim: string | null
           id: string
           inscricoes_abertura: string | null
+          inscricoes_encerramento: string | null
           locais: string[]
           logos_url: string | null
           possui_oficinas: boolean
@@ -74,8 +82,10 @@ export type Database = {
           cidade?: string | null
           created_at?: string
           data_evento?: string | null
+          data_fim?: string | null
           id?: string
           inscricoes_abertura?: string | null
+          inscricoes_encerramento?: string | null
           locais?: string[]
           logos_url?: string | null
           possui_oficinas?: boolean
@@ -89,8 +99,10 @@ export type Database = {
           cidade?: string | null
           created_at?: string
           data_evento?: string | null
+          data_fim?: string | null
           id?: string
           inscricoes_abertura?: string | null
+          inscricoes_encerramento?: string | null
           locais?: string[]
           logos_url?: string | null
           possui_oficinas?: boolean
@@ -98,6 +110,33 @@ export type Database = {
           regulamento_url?: string | null
           updated_at?: string
           video_url?: string | null
+        }
+        Relationships: []
+      }
+      payment_methods: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          ordem?: number
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -135,6 +174,7 @@ export type Database = {
           descricao: string
           horario: string | null
           id: string
+          imagem_url: string | null
           local: string | null
           nome: string
           publicado: boolean
@@ -146,6 +186,7 @@ export type Database = {
           descricao?: string
           horario?: string | null
           id?: string
+          imagem_url?: string | null
           local?: string | null
           nome: string
           publicado?: boolean
@@ -157,10 +198,38 @@ export type Database = {
           descricao?: string
           horario?: string | null
           id?: string
+          imagem_url?: string | null
           local?: string | null
           nome?: string
           publicado?: boolean
           updated_at?: string
+        }
+        Relationships: []
+      }
+      registration_categories: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          updated_at: string
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem?: number
+          updated_at?: string
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          updated_at?: string
+          valor?: number | null
         }
         Relationships: []
       }
